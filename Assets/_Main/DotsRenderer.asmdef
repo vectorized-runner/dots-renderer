@@ -8,7 +8,8 @@
         "Unity.Jobs",
         "Unity.Collections",
         "Unity.Transforms",
-        "Unity.Entities.Hybrid"
+        "Unity.Entities.Hybrid",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
