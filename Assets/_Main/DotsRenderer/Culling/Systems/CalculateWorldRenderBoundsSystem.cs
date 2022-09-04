@@ -5,6 +5,7 @@ using Unity.Transforms;
 namespace DotsRenderer
 {
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
+	[UpdateAfter(typeof(CalculateCameraFrustumPlanesSystem))]
 	public partial class CalculateWorldRenderBoundsSystem : SystemBase
 	{
 		/// <summary>

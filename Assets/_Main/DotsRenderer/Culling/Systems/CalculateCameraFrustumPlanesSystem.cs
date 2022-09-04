@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace DotsRenderer
 {
+	[UpdateInGroup(typeof(PresentationSystemGroup), OrderFirst = true)]
 	public partial class CalculateCameraFrustumPlanesSystem : SystemBase
 	{
 		public NativeArray<Plane> NativeFrustumPlanes;
