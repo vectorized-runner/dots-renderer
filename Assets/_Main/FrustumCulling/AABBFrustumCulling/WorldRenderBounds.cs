@@ -4,7 +4,7 @@ using Unity.Entities;
 namespace DotsLibrary.Rendering
 {
 	[Serializable]
-	public struct CRenderBounds : IComponentData
+	public struct WorldRenderBounds : IComponentData
 	{
 		public AABB AABB;
 	}

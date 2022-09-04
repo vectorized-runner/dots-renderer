@@ -8,11 +8,11 @@ namespace DotsLibrary.Rendering
 	{
 		EntityQuery RenderBoundsQuery;
 
-		public NativeList<CRenderBounds> RenderBoundsOfEntities;
+		public NativeList<RenderBounds> RenderBoundsOfEntities;
 
 		protected override void OnCreate()
 		{
-			RenderBoundsOfEntities = new NativeList<CRenderBounds>(Allocator.Persistent);
+			RenderBoundsOfEntities = new NativeList<RenderBounds>(Allocator.Persistent);
 		}
 
 		protected override void OnDestroy()
@@ -40,7 +40,7 @@ namespace DotsLibrary.Rendering
 
 			Entities
 				.WithStoreEntityQueryInField(ref RenderBoundsQuery)
-				.ForEach((in CRenderBounds renderBounds) => { renderBoundsOfEntities.AddNoResize(renderBounds); })
+				.ForEach((in RenderBounds renderBounds) => { renderBoundsOfEntities.AddNoResize(renderBounds); })
 				.Schedule();
 		}
 	}

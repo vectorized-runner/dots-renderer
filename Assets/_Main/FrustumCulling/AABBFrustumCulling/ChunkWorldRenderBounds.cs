@@ -2,7 +2,7 @@
 
 namespace DotsLibrary.Rendering
 {
-	public struct CChunkWorldRenderBounds : IComponentData
+	public struct ChunkWorldRenderBounds : IComponentData
 	{
 		public AABB Value;
 	}

@@ -35,7 +35,7 @@ namespace DotsLibrary.Rendering
 			var frustumPlanes = World.GetExistingSystem<CalculateFrustumPlanesSystem>().NativeFrustumPlanes;
 
 			Entities
-				.ForEach((in CRenderBounds renderBounds, in Translation translation) =>
+				.ForEach((in RenderBounds renderBounds, in Translation translation) =>
 				{
 					if(RMath.IsVisibleByCameraFrustum(frustumPlanes, renderBounds.AABB))
 					{
