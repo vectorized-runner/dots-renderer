@@ -42,6 +42,19 @@ namespace DotsRenderer
 		{
 			return ref UnsafeUtility.ArrayElementAsRef<T>(array.GetUnsafeReadOnlyPtr(), index);
 		}
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T> AsSpan<T>(this UnsafeList<T> list, int startIndex, int length) where T : unmanaged
+		{
+			return GetSpan(list.Ptr, startIndex, length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ReadOnlySpan<T> AsReadOnlySpan<T>(this UnsafeList<T> list, int startIndex, int length)
+			where T : unmanaged
+		{
+			return GetReadOnlySpan(list.Ptr, startIndex, length);
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<T> AsSpan<T>(this NativeList<T> list, int startIndex, int length) where T : unmanaged
