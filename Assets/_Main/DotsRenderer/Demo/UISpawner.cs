@@ -1,14 +1,18 @@
-﻿using DotsRenderer.PerfTesting;
+﻿using System;
+using System.Diagnostics;
+using DotsRenderer.PerfTesting;
 using TMPro;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 namespace DotsRenderer.Demo
 {
 	public class UISpawner : MonoBehaviour
 	{
+		public TextMeshProUGUI TimeText;
 		public TextMeshProUGUI CountText;
 		public TMP_InputField InputField;
 		public Button SpawnButton;
@@ -16,6 +20,8 @@ namespace DotsRenderer.Demo
 
 		EntityManager EntityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
+		Stopwatch Stopwatch = new Stopwatch();
+		
 		void Start()
 		{
 			SpawnButton.onClick.AddListener(Spawn);
@@ -24,6 +30,15 @@ namespace DotsRenderer.Demo
 		void OnDestroy()
 		{
 			SpawnButton.onClick.RemoveListener(Spawn);
+		}
+
+		void Update()
+		{
+			Stopwatch.Stop();
+			var elapsedMs = Stopwatch.Elapsed.TotalMilliseconds;
+			Stopwatch.Restart();
+			
+			TimeText.text = $"{elapsedMs} ms";
 		}
 
 		void LateUpdate()
