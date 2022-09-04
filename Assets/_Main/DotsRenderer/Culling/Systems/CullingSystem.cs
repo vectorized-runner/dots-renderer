@@ -2,6 +2,7 @@
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace DotsRenderer
 {
@@ -41,6 +42,17 @@ namespace DotsRenderer
 				   }
 			   })
 			   .Schedule();
+			
+			// Resize until we have enough lists
+			var renderMeshCount = RendererData.RenderMeshList.Count;
+			Job.WithCode(() =>
+			{
+				while(matricesByRenderMeshIndex.Length != renderMeshCount)
+				{
+					Debug.Assert(renderMeshCount > matricesByRenderMeshIndex.Length);
+					matricesByRenderMeshIndex.Add(new UnsafeList<LocalToWorld>(0, Allocator.Persistent));
+				}
+			}).Schedule();
 			
 			Entities.ForEach((in WorldRenderBounds worldRenderBounds,
 			                  in RenderMeshIndex renderMeshIndex,
