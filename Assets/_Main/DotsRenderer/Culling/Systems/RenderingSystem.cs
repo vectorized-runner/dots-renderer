@@ -22,15 +22,21 @@ namespace DotsRenderer
 		protected override void OnUpdate()
 		{
 			var renderMeshes = RendererData.RenderMeshList;
+			if(renderMeshes.Count == 0)
+				return;
+			
 			var matricesByRenderMeshIndex = CullingSystem.MatricesByRenderMeshIndex;
 			var renderMeshCount = matricesByRenderMeshIndex.Length;
 
 			for(int renderMeshIndex = 0; renderMeshIndex < renderMeshCount; renderMeshIndex++)
 			{
-				const int maxDrawCountPerBatch = 1023;
 				var matrices = matricesByRenderMeshIndex[renderMeshIndex];
-				var renderMesh = renderMeshes[renderMeshIndex];
 				var drawCount = matrices.Length;
+				if(drawCount == 0)
+					continue;
+				
+				const int maxDrawCountPerBatch = 1023;
+				var renderMesh = renderMeshes[renderMeshIndex];
 				var fullBatchCount = drawCount / maxDrawCountPerBatch;
 				var lastBatchDrawCount = drawCount % maxDrawCountPerBatch;
 				ReadOnlySpan<LocalToWorld> localToWorldSlice;
