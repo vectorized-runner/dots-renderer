@@ -30,6 +30,7 @@ namespace DotsRenderer
 		protected override void OnUpdate()
 		{
 			var frustumPlanes = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>().NativeFrustumPlanes;
+			var matricesByRenderMeshIndex = MatricesByRenderMeshIndex;
 
 			Entities.ForEach((in WorldRenderBounds worldRenderBounds,
 			                  in RenderMeshIndex renderMeshIndex,
@@ -37,7 +38,7 @@ namespace DotsRenderer
 			        {
 				        if(RMath.IsVisibleByCameraFrustum(frustumPlanes, worldRenderBounds.AABB))
 				        {
-					        ref var matrices = ref MatricesByRenderMeshIndex.ElementAsRef(renderMeshIndex.Value);
+					        ref var matrices = ref matricesByRenderMeshIndex.ElementAsRef(renderMeshIndex.Value);
 					        // TODO-Optimization: This addition is not thread-safe, we need to figure out another way if we want to process in parallel.
 					        matrices.Add(localToWorld);
 				        }
