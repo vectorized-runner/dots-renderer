@@ -1,11 +1,10 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace DotsLibrary.Rendering
 {
-	public partial class RecalculateDynamicEntityAABBSystem : SystemBase
+	public partial class CalculateWorldRenderBoundsSystem : SystemBase
 	{
 		/// <summary>
 		/// https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling

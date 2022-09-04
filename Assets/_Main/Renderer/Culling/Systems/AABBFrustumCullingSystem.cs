@@ -9,8 +9,8 @@ namespace DotsLibrary.Rendering
 {
 	// TODO: Remove this System.
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
-	[UpdateAfter(typeof(CalculateFrustumPlanesSystem))]
-	[UpdateAfter(typeof(RecalculateDynamicEntityAABBSystem))]
+	[UpdateAfter(typeof(CalculateCameraFrustumPlanesSystem))]
+	[UpdateAfter(typeof(CalculateWorldRenderBoundsSystem))]
 	public partial class AABBFrustumCullingSystem : SystemBase
 	{
 		public JobHandle CullingJobHandle;
@@ -32,7 +32,7 @@ namespace DotsLibrary.Rendering
 		protected override void OnUpdate()
 		{
 			var renderPositions = new NativeList<float3>(Allocator.TempJob);
-			var frustumPlanes = World.GetExistingSystem<CalculateFrustumPlanesSystem>().NativeFrustumPlanes;
+			var frustumPlanes = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>().NativeFrustumPlanes;
 
 			Entities
 				.ForEach((in RenderBounds renderBounds, in Translation translation) =>
