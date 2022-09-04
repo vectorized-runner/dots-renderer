@@ -47,7 +47,7 @@ namespace DotsLibrary.Rendering
 			{
 				var worldRenderBounds = chunk.GetChunkComponentData(ChunkWorldRenderBoundsHandle);
 				
-				if(RMath.IsVisibleByCameraFrustum(CameraFrustumPlanes, worldRenderBounds.Value))
+				if(RMath.IsVisibleByCameraFrustum(CameraFrustumPlanes, worldRenderBounds.AABB))
 				{
 					var worldRenderBoundsArray = chunk.GetNativeArray(WorldRenderBoundsHandle);
 					var localToWorldArray = chunk.GetNativeArray(LocalToWorldHandle);
