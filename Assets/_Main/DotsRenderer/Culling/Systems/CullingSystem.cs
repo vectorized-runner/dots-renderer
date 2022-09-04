@@ -40,7 +40,8 @@ namespace DotsRenderer
 			   {
 				   for(int i = 0; i < matricesByRenderMeshIndex.Length; i++)
 				   {
-					   matricesByRenderMeshIndex[i].Clear();
+					   ref var matrices = ref matricesByRenderMeshIndex.ElementAsRef(i);
+					   matrices.Clear();
 				   }
 			   })
 			   .Schedule();
