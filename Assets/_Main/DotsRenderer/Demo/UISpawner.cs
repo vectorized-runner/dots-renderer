@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DotsRenderer.PerfTesting;
+﻿using DotsRenderer.PerfTesting;
 using TMPro;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -32,9 +31,14 @@ namespace DotsRenderer.Demo
 				Debug.LogError($"Can't parse int from text: '{text}'");
 				return;
 			}
+			
+			var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+			var renderQuery = entityManager.CreateEntityQuery(typeof(RenderEntityTag));
+			
+			// Destroy existing objects first
+			entityManager.DestroyEntity(renderQuery);
 
 			var countSqrt = (int)math.sqrt(spawnCount);
-			var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 			var query = entityManager.CreateEntityQuery(typeof(EntityToSpawn));
 			var singleton = query.GetSingletonEntity();
 			var entityToSpawn = entityManager.GetComponentData<EntityToSpawn>(singleton).Value;
