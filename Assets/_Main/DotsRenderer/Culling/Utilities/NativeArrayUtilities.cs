@@ -14,6 +14,12 @@ namespace DotsRenderer
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T* GetTypedPtr<T>(this NativeList<T> list) where T : unmanaged
+		{
+			return (T*)list.GetUnsafePtr();
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ref T ElementAsRef<T>(this NativeList<T> list, int index) where T : unmanaged
 		{
 			return ref UnsafeUtility.ArrayElementAsRef<T>(list.GetUnsafePtr(), index);
@@ -40,35 +46,39 @@ namespace DotsRenderer
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<T> AsSpan<T>(this NativeList<T> list, int startIndex, int length) where T : unmanaged
 		{
-			var typedPtr = (T*)list.GetUnsafePtr();
-			var startAddress = typedPtr + startIndex;
-			return new Span<T>(startAddress, length);
+			return GetSpan(list.GetTypedPtr(), startIndex, length);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ReadOnlySpan<T> AsReadOnlySpan<T>(this NativeList<T> list, int startIndex, int length)
 			where T : unmanaged
 		{
-			var typedPtr = (T*)list.GetUnsafeReadOnlyPtr();
-			var startAddress = typedPtr + startIndex;
-			return new ReadOnlySpan<T>(startAddress, length);
+			return GetReadOnlySpan(list.GetTypedPtr(), startIndex, length);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<T> AsSpan<T>(this NativeArray<T> array, int startIndex, int length) where T : unmanaged
 		{
-			var typedPtr = (T*)array.GetUnsafePtr();
-			var startAddress = typedPtr + startIndex;
-			return new Span<T>(startAddress, length);
+			return GetSpan(array.GetTypedPtr(), startIndex, length);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ReadOnlySpan<T> AsReadOnlySpan<T>(this NativeArray<T> array, int startIndex, int length)
 			where T : unmanaged
 		{
-			var typedPtr = (T*)array.GetUnsafeReadOnlyPtr();
-			var startAddress = typedPtr + startIndex;
-			return new ReadOnlySpan<T>(startAddress, length);
+			return GetReadOnlySpan(array.GetTypedPtr(), startIndex, length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static ReadOnlySpan<T> GetReadOnlySpan<T>(T* ptr, int startIndex, int length) where T : unmanaged
+		{
+			return new ReadOnlySpan<T>(ptr + startIndex, length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static Span<T> GetSpan<T>(T* ptr, int startIndex, int length) where T : unmanaged
+		{
+			return new Span<T>(ptr + startIndex, length);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
