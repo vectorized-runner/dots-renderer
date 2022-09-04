@@ -16,7 +16,7 @@ namespace DotsRenderer.PerfTesting
 		{
 			var spawnData = GetSingleton<SpawnData>();
 			var spawnCount = spawnData.CountX * spawnData.CountZ;
-			var spawnedEntities = EntityManager.Instantiate(spawnData.Entity, spawnCount, Allocator.TempJob);
+			var spawnedEntities = EntityManager.Instantiate(spawnData.Entity, spawnCount, Allocator.Temp);
 			var countX = spawnData.CountX;
 
 			for(int index = 0; index < spawnedEntities.Length; index++)
