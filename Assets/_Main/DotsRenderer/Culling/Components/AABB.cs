@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	[Serializable]
 	public struct AABB

@@ -2,7 +2,7 @@
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer.Archived
 {
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public partial class SphereRenderingSystem : SystemBase

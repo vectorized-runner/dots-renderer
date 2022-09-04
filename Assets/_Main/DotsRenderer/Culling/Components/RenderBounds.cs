@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Entities;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	[Serializable]
 	public struct RenderBounds : IComponentData

@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer.Archived
 {
 	[GenerateAuthoringComponent]
 	public struct CreateSpheresData : IComponentData

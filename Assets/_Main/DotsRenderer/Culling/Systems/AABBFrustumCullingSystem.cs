@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	// TODO: Remove this System.
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
