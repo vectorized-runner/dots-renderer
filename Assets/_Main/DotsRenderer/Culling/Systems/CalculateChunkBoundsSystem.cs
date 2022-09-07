@@ -1,8 +1,8 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace DotsRenderer
 {
@@ -32,8 +32,9 @@ namespace DotsRenderer
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		AABB Encapsulate(AABB first, AABB second)
 		{
-			// TODO-Implement this.
-			throw new NotImplementedException();
+			var newMin = math.min(first.Min, second.Min);
+			var newMax = math.max(first.Max, second.Max);
+			return AABB.FromMinMax(newMin, newMax);
 		}
 	}
 
