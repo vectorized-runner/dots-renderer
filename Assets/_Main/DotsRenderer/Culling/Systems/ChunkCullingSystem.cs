@@ -13,7 +13,7 @@ namespace DotsRenderer
 		[NativeSetThreadIndex]
 		public int ThreadIndex;
 		[ReadOnly]
-		public NativeArray<UnsafeStream> RenderMatricesByRenderMeshIndex;
+		public NativeArray<UnsafeStream> MatrixStreamByRenderMeshIndex;
 		[ReadOnly]
 		public ComponentTypeHandle<RenderMeshIndex> RenderMeshIndexHandle;
 		[ReadOnly]
@@ -44,7 +44,7 @@ namespace DotsRenderer
 			var chunkRenderMeshIndex = chunk.GetChunkComponentData(RenderMeshIndexHandle);
 			var localToWorldArray = chunk.GetNativeArray(LocalToWorldHandle);
 
-			ref var stream = ref RenderMatricesByRenderMeshIndex.ElementAsRef(chunkRenderMeshIndex.Value);
+			ref var stream = ref MatrixStreamByRenderMeshIndex.ElementAsRef(chunkRenderMeshIndex.Value);
 			var writer = stream.AsWriter();
 
 			writer.BeginForEachIndex(ThreadIndex);
@@ -66,6 +66,7 @@ namespace DotsRenderer
 	{
 		EntityQuery ChunkCullingQuery;
 		CalculateCameraFrustumPlanesSystem FrustumSystem;
+		NativeList<UnsafeStream> MatrixStreamByRenderMeshIndex;
 
 		protected override void OnCreate()
 		{
@@ -81,7 +82,8 @@ namespace DotsRenderer
 		protected override void OnUpdate()
 		{
 			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
-			
+			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
+
 			new ChunkCullingJob
 			{
 				ChunkWorldRenderBoundsHandle = GetComponentTypeHandle<ChunkWorldRenderBounds>(),
@@ -89,7 +91,7 @@ namespace DotsRenderer
 				RenderMeshIndexHandle = GetComponentTypeHandle<RenderMeshIndex>(),
 				WorldRenderBoundsHandle = GetComponentTypeHandle<WorldRenderBounds>(),
 				FrustumPlanes = frustumPlanes,
-				RenderMatricesByRenderMeshIndex = ,
+				MatrixStreamByRenderMeshIndex = matrixStreamByRenderMeshIndex,
 			}.ScheduleParallel(ChunkCullingQuery);
 		}
 	}
