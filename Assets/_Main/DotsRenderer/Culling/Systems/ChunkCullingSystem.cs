@@ -36,17 +36,17 @@ namespace DotsRenderer
 			var count = chunk.ChunkEntityCount;
 			if(count == 0)
 				return;
-			
+
 			var worldRenderBoundsArray = chunk.GetNativeArray(WorldRenderBoundsHandle);
 			// These should be the same?
 			Debug.Assert(count == worldRenderBoundsArray.Length);
-			
+
 			var chunkRenderMeshIndex = chunk.GetChunkComponentData(RenderMeshIndexHandle);
 			var localToWorldArray = chunk.GetNativeArray(LocalToWorldHandle);
-			
+
 			ref var stream = ref RenderMatricesByRenderMeshIndex.ElementAsRef(chunkRenderMeshIndex.Value);
 			var writer = stream.AsWriter();
-			
+
 			writer.BeginForEachIndex(ThreadIndex);
 			{
 				for(int i = 0; i < count; i++)
@@ -60,17 +60,37 @@ namespace DotsRenderer
 			writer.EndForEachIndex();
 		}
 	}
-	
-	// What am I trying to achieve?
-	// For each chunk, first check the chunk to see if we should render any of its entities.
-	// Then check the Entities themselves, and for the ones we should render,
-	// Collect their data, but the code needs to run in parallel.
 
+	
 	public partial class ChunkCullingSystem : SystemBase
 	{
+		EntityQuery ChunkCullingQuery;
+		CalculateCameraFrustumPlanesSystem FrustumSystem;
+
+		protected override void OnCreate()
+		{
+			FrustumSystem = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>();
+			
+			ChunkCullingQuery = GetEntityQuery(
+				ComponentType.ReadOnly<WorldRenderBounds>(),
+				ComponentType.ReadOnly<LocalToWorld>(),
+				ComponentType.ChunkComponentReadOnly(typeof(RenderMeshIndex)),
+				ComponentType.ChunkComponentReadOnly(typeof(ChunkWorldRenderBounds)));
+		}
+
 		protected override void OnUpdate()
 		{
-			throw new System.NotImplementedException();
+			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
+			
+			new ChunkCullingJob
+			{
+				ChunkWorldRenderBoundsHandle = GetComponentTypeHandle<ChunkWorldRenderBounds>(),
+				LocalToWorldHandle = GetComponentTypeHandle<LocalToWorld>(),
+				RenderMeshIndexHandle = GetComponentTypeHandle<RenderMeshIndex>(),
+				WorldRenderBoundsHandle = GetComponentTypeHandle<WorldRenderBounds>(),
+				FrustumPlanes = frustumPlanes,
+				RenderMatricesByRenderMeshIndex = ,
+			}.ScheduleParallel(ChunkCullingQuery);
 		}
 	}
 }
