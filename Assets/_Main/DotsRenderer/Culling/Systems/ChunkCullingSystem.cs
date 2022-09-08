@@ -61,7 +61,6 @@ namespace DotsRenderer
 		}
 	}
 
-	
 	public partial class ChunkCullingSystem : SystemBase
 	{
 		EntityQuery ChunkCullingQuery;
@@ -71,7 +70,7 @@ namespace DotsRenderer
 		protected override void OnCreate()
 		{
 			FrustumSystem = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>();
-			
+
 			ChunkCullingQuery = GetEntityQuery(
 				ComponentType.ReadOnly<WorldRenderBounds>(),
 				ComponentType.ReadOnly<LocalToWorld>(),
@@ -84,6 +83,8 @@ namespace DotsRenderer
 			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
 			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
 
+			// TODO-Update Stream count to match RenderMeshIndex count.
+
 			new ChunkCullingJob
 			{
 				ChunkWorldRenderBoundsHandle = GetComponentTypeHandle<ChunkWorldRenderBounds>(),
@@ -93,6 +94,13 @@ namespace DotsRenderer
 				FrustumPlanes = frustumPlanes,
 				MatrixStreamByRenderMeshIndex = matrixStreamByRenderMeshIndex,
 			}.ScheduleParallel(ChunkCullingQuery);
+
+			// TODO: Call ToArray on All Streams, Merge them
+			// TODO: Do the Rendering logic
+			// TODO: Dispose the streams
+			// TODO: Make RenderMeshIndex a SharedComponent, update Queries etc.
+			// TODO: Add ChunkWorldRenderBounds automatically, spatial division
+			// TODO: Complete this demo! Check for performance!
 		}
 	}
 }
