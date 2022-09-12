@@ -19,7 +19,7 @@ namespace DotsRenderer
 			var worldRenderBoundsArray = chunk.GetNativeArray(WorldRenderBoundsHandle);
 			var resultAABB = new AABB();
 
-			// TODO-Optimize: This can be optimized by unrolling and removing 'resultAABB' data dependency?
+			// TODO-Optimization: This can be optimized by unrolling and removing 'resultAABB' data dependency?
 			// Instead check indices 0-1, 2-3, 4-5 etc...
 			for(int i = 0; i < worldRenderBoundsArray.Length; i++)
 			{
