@@ -2,6 +2,7 @@
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -83,7 +84,27 @@ namespace DotsRenderer
 			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
 			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
 
-			// TODO-Update Stream count to match RenderMeshIndex count.
+			// TODO: See if we can Clear instead of disposing?
+			Job.WithCode(() =>
+			   {
+				   // Dispose previous frame lists
+				   for(int i = 0; i < matrixStreamByRenderMeshIndex.Length; i++)
+				   {
+					   ref var matrices = ref matrixStreamByRenderMeshIndex.ElementAsRef(i);
+					   matrices.Dispose();
+					   matrices = new UnsafeStream(JobsUtility.MaxJobThreadCount, Allocator.TempJob);
+				   }
+				   
+				   // Add new streams to match the RenderMesh count
+				   var renderMeshCount = RendererData.RenderMeshList.Count;
+
+				   while(matrixStreamByRenderMeshIndex.Length != renderMeshCount)
+				   {
+					   Debug.Assert(renderMeshCount > matrixStreamByRenderMeshIndex.Length);
+					   matrixStreamByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount, Allocator.TempJob));
+				   }
+			   })
+			   .Schedule();
 
 			new ChunkCullingJob
 			{
