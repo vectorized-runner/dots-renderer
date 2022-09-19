@@ -12,6 +12,14 @@ namespace DotsRenderer
 
 		public Allocator Allocator;
 
+		public T this[int index]
+		{
+			get => UnsafeUtility.ReadArrayElement<T>(Ptr, index);
+			set => UnsafeUtility.WriteArrayElement(Ptr, index, value);
+		}
+
+		public ref T ElementAsRef(int index) => ref UnsafeUtility.ArrayElementAsRef<T>(Ptr, index);
+
 		public UnsafeArray(T* ptr, int length, Allocator allocator)
 		{
 			Ptr = ptr;
