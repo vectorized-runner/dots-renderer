@@ -81,11 +81,14 @@ namespace DotsRenderer
 		}
 	}
 
-	public unsafe partial class ChunkCullingSystem : SystemBase
+	public partial class ChunkCullingSystem : SystemBase
 	{
 		EntityQuery ChunkCullingQuery;
 		CalculateCameraFrustumPlanesSystem FrustumSystem;
 		NativeList<UnsafeStream> MatrixStreamByRenderMeshIndex;
+		NativeArray<UnsafeArray<float4x4>> MatrixArrayByRenderMeshIndex;
+
+		public JobHandle FinalJobHandle { get; private set; }
 
 		protected override void OnCreate()
 		{
@@ -104,10 +107,9 @@ namespace DotsRenderer
 			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
 			var renderMeshCount = RendererData.RenderMeshList.Count;
 
-			// TODO: See if we can Clear instead of disposing?
 			Job.WithCode(() =>
 			   {
-				   // Dispose previous frame Streams
+				   // Dispose previous frame Streams and Recreate them
 				   for(int i = 0; i < matrixStreamByRenderMeshIndex.Length; i++)
 				   {
 					   ref var matrices = ref matrixStreamByRenderMeshIndex.ElementAsRef(i);
@@ -135,18 +137,20 @@ namespace DotsRenderer
 			}.ScheduleParallel(ChunkCullingQuery);
 			
 			var matrixArrayByRenderMeshIndex = new NativeArray<UnsafeArray<float4x4>>(renderMeshCount, Allocator.TempJob);
-
+			MatrixArrayByRenderMeshIndex = matrixArrayByRenderMeshIndex;
+			
 			var convertStreamJobHandle = new ConvertStreamDataToArrayJob
 			{
 				Input = matrixStreamByRenderMeshIndex,
 				Output = matrixArrayByRenderMeshIndex,
-			}.Schedule(renderMeshCount, 4, chunkCullingHandle);
+			}.Schedule(renderMeshCount, 16, chunkCullingHandle);
 
-			Dependency = convertStreamJobHandle;
+			// TODO: Handle Rendering here
+			
+			FinalJobHandle = convertStreamJobHandle;
 
 			// TODO: Call ToArray on All Streams, Merge them
 			// TODO: Do the Rendering logic
-			// TODO: Dispose the streams
 			// TODO: Make RenderMeshIndex a SharedComponent, update Queries etc.
 			// TODO: Add ChunkWorldRenderBounds automatically, spatial division
 			// TODO: Complete this demo! Check for performance!
