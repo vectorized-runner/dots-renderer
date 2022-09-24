@@ -97,6 +97,7 @@ namespace DotsRenderer
 		{
 			RenderMeshes = new List<RenderMesh>();
 			FrustumSystem = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>();
+			MatrixStreamByRenderMeshIndex = new NativeList<UnsafeStream>(Allocator.Persistent);
 			
 			ChunkCullingQuery = GetEntityQuery(
 				ComponentType.ReadOnly<WorldRenderBounds>(),
@@ -107,6 +108,12 @@ namespace DotsRenderer
 
 		protected override void OnDestroy()
 		{
+			for(int i = 0; i < MatrixStreamByRenderMeshIndex.Length; i++)
+			{
+				ref var stream = ref MatrixStreamByRenderMeshIndex.ElementAsRef(i);
+				stream.Dispose();
+			}
+			
 			MatrixStreamByRenderMeshIndex.Dispose();
 		}
 
