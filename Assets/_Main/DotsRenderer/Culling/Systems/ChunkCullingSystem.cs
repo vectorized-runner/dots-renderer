@@ -17,7 +17,7 @@ namespace DotsRenderer
 		[NativeSetThreadIndex]
 		public int ThreadIndex;
 		[ReadOnly]
-		public SharedComponentTypeHandle<RenderMeshIndex> RenderMeshIndexHandle;
+		public SharedComponentTypeHandle<RenderMesh> RenderMeshHandle;
 		[ReadOnly]
 		public ComponentTypeHandle<LocalToWorld> LocalToWorldHandle;
 		[ReadOnly]
@@ -43,7 +43,7 @@ namespace DotsRenderer
 			var worldRenderBoundsArray = chunk.GetNativeArray(WorldRenderBoundsHandle);
 			Debug.Assert(entityCount == worldRenderBoundsArray.Length);
 
-			var sharedComponentIndex = chunk.GetSharedComponentIndex(RenderMeshIndexHandle);
+			var sharedComponentIndex = chunk.GetSharedComponentIndex(RenderMeshHandle);
 			var localToWorldArray = chunk.GetNativeArray(LocalToWorldHandle);
 
 			ref var matrices = ref MatricesByRenderMeshIndex.ElementAsRef(sharedComponentIndex);
@@ -85,6 +85,7 @@ namespace DotsRenderer
 	{
 		public NativeArray<UnsafeArray<float4x4>> MatrixArrayByRenderMeshIndex;
 		public JobHandle FinalJobHandle { get; private set; }
+		public List<RenderMesh> RenderMeshes { get; private set; }
 		
 		EntityQuery ChunkCullingQuery;
 		CalculateCameraFrustumPlanesSystem FrustumSystem;
@@ -92,23 +93,25 @@ namespace DotsRenderer
 
 		protected override void OnCreate()
 		{
+			RenderMeshes = new List<RenderMesh>();
 			FrustumSystem = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>();
 
 			ChunkCullingQuery = GetEntityQuery(
 				ComponentType.ReadOnly<WorldRenderBounds>(),
 				ComponentType.ReadOnly<LocalToWorld>(),
-				ComponentType.ChunkComponentReadOnly(typeof(RenderMeshIndex)),
+				ComponentType.ReadOnly(typeof(RenderMesh)),
 				ComponentType.ChunkComponentReadOnly(typeof(ChunkWorldRenderBounds)));
 		}
 
 		protected override void OnUpdate()
 		{
+			// TODO-Renderer: Ensure no RenderMeshes are created between update of this system and end of update of the Renderer
 			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
 			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
-			var renderMeshCount = RendererData.RenderMeshList.Count;
 
-			var renderMeshIndicesManaged = new List<RenderMeshIndex>();
-			EntityManager.GetAllUniqueSharedComponentData(renderMeshIndicesManaged);
+			RenderMeshes.Clear();
+			EntityManager.GetAllUniqueSharedComponentData(RenderMeshes);
+			var renderMeshCount = RenderMeshes.Count;
 			
 			Job.WithCode(() =>
 			   {
@@ -133,7 +136,7 @@ namespace DotsRenderer
 			{
 				ChunkWorldRenderBoundsHandle = GetComponentTypeHandle<ChunkWorldRenderBounds>(),
 				LocalToWorldHandle = GetComponentTypeHandle<LocalToWorld>(),
-				RenderMeshIndexHandle = GetSharedComponentTypeHandle<RenderMeshIndex>(),
+				RenderMeshHandle = GetSharedComponentTypeHandle<RenderMesh>(),
 				WorldRenderBoundsHandle = GetComponentTypeHandle<WorldRenderBounds>(),
 				FrustumPlanes = frustumPlanes,
 				MatricesByRenderMeshIndex = matrixStreamByRenderMeshIndex,

@@ -33,8 +33,7 @@ namespace DotsRenderer
 			var mesh = MeshFilter.sharedMesh;
 			// TODO: Get SubMeshIndex properly
 			var renderMesh = new RenderMesh(mesh, materials[0], 0);
-			var renderMeshIndex = RendererData.RegisterRenderMeshAndGetIndex(renderMesh);
-			dstManager.AddSharedComponentData(entity, renderMeshIndex);
+			dstManager.AddSharedComponentData(entity, renderMesh);
 
 			if(IsStatic)
 			{
