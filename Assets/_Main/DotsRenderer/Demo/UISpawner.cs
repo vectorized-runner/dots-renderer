@@ -43,7 +43,7 @@ namespace DotsRenderer.Demo
 
 		void LateUpdate()
 		{
-			var count = EntityManager.CreateEntityQuery(typeof(RenderEntityTag)).CalculateEntityCount();
+			var count = EntityManager.CreateEntityQuery(typeof(WorldRenderBounds)).CalculateEntityCount();
 			CountText.text = $"RenderCount: {count.ToString()}";
 		}
 
@@ -57,7 +57,7 @@ namespace DotsRenderer.Demo
 			}
 
 			var entityManager = EntityManager;
-			var renderQuery = entityManager.CreateEntityQuery(typeof(RenderEntityTag));
+			var renderQuery = entityManager.CreateEntityQuery(typeof(WorldRenderBounds));
 
 			// Destroy existing objects first
 			entityManager.DestroyEntity(renderQuery);
