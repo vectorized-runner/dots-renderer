@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DotsRenderer
 {
-	// TODO-Handle setup for multi-material models.
+	// TODO-Renderer: Handle setup for multi-material models.
 	public class DotsRendererAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		public MeshRenderer MeshRenderer;
@@ -31,7 +31,7 @@ namespace DotsRenderer
 				throw new NotSupportedException("Multiple materials isn't supported.");
 
 			var mesh = MeshFilter.sharedMesh;
-			// TODO: Get SubMeshIndex properly
+			// TODO-Renderer: Get SubMeshIndex properly
 			var renderMesh = new RenderMesh(mesh, materials[0], 0);
 			dstManager.AddSharedComponentData(entity, renderMesh);
 
