@@ -98,7 +98,7 @@ namespace DotsRenderer
 			RenderMeshes = new List<RenderMesh>();
 			FrustumSystem = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>();
 			MatrixStreamByRenderMeshIndex = new NativeList<UnsafeStream>(Allocator.Persistent);
-			
+
 			ChunkCullingQuery = GetEntityQuery(
 				ComponentType.ReadOnly<WorldRenderBounds>(),
 				ComponentType.ReadOnly<LocalToWorld>(),
@@ -113,7 +113,7 @@ namespace DotsRenderer
 				ref var stream = ref MatrixStreamByRenderMeshIndex.ElementAsRef(i);
 				stream.Dispose();
 			}
-			
+
 			MatrixStreamByRenderMeshIndex.Dispose();
 		}
 
@@ -128,25 +128,26 @@ namespace DotsRenderer
 			var renderMeshCount = RenderMeshes.Count;
 			Debug.Assert(renderMeshCount > 0);
 
-			var updateStreamsHandle = 
+			var updateStreamsHandle =
 				Job.WithCode(() =>
-			   {
-				   // Dispose previous frame Streams and Recreate them
-				   for(int i = 0; i < matricesByRenderMeshIndex.Length; i++)
 				   {
-					   ref var matrices = ref matricesByRenderMeshIndex.ElementAsRef(i);
-					   matrices.Dispose();
-					   matrices = new UnsafeStream(JobsUtility.MaxJobThreadCount, Allocator.TempJob);
-				   }
+					   // Dispose previous frame Streams and Recreate them
+					   for(int i = 0; i < matricesByRenderMeshIndex.Length; i++)
+					   {
+						   ref var matrices = ref matricesByRenderMeshIndex.ElementAsRef(i);
+						   matrices.Dispose();
+						   matrices = new UnsafeStream(JobsUtility.MaxJobThreadCount, Allocator.TempJob);
+					   }
 
-				   // Add new streams to match the RenderMesh count
-				   while(matricesByRenderMeshIndex.Length < renderMeshCount)
-				   {
-					   matricesByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount,
-						   Allocator.TempJob));
-				   }
-			   })
-			   .Schedule(Dependency);
+					   // Add new streams to match the RenderMesh count
+					   while(matricesByRenderMeshIndex.Length < renderMeshCount)
+					   {
+						   matricesByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount,
+							   Allocator.TempJob));
+					   }
+				   })
+				   .WithName("UpdateMatrixStreamsJob")
+				   .Schedule(Dependency);
 
 			var chunkCullingHandle = new ChunkCullingJob
 			{
