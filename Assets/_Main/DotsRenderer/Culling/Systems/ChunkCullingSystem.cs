@@ -113,8 +113,10 @@ namespace DotsRenderer
 			RenderMeshes.Clear();
 			EntityManager.GetAllUniqueSharedComponentData(RenderMeshes);
 			var renderMeshCount = RenderMeshes.Count;
+			Debug.Assert(renderMeshCount > 0);
 
-			Job.WithCode(() =>
+			var updateStreamsHandle = 
+				Job.WithCode(() =>
 			   {
 				   // Dispose previous frame Streams and Recreate them
 				   for(int i = 0; i < matrixStreamByRenderMeshIndex.Length; i++)
@@ -131,7 +133,7 @@ namespace DotsRenderer
 						   Allocator.TempJob));
 				   }
 			   })
-			   .Schedule();
+			   .Schedule(Dependency);
 
 			var chunkCullingHandle = new ChunkCullingJob
 			{
@@ -141,7 +143,7 @@ namespace DotsRenderer
 				WorldRenderBoundsHandle = GetComponentTypeHandle<WorldRenderBounds>(),
 				FrustumPlanes = frustumPlanes,
 				MatricesByRenderMeshIndex = matrixStreamByRenderMeshIndex,
-			}.ScheduleParallel(ChunkCullingQuery);
+			}.ScheduleParallel(ChunkCullingQuery, updateStreamsHandle);
 
 			var matrixArrayByRenderMeshIndex =
 				new NativeArray<UnsafeArray<float4x4>>(renderMeshCount, Allocator.TempJob);
@@ -153,7 +155,7 @@ namespace DotsRenderer
 				Output = matrixArrayByRenderMeshIndex,
 			}.Schedule(renderMeshCount, 16, chunkCullingHandle);
 
-			FinalJobHandle = convertStreamJobHandle;
+			Dependency = FinalJobHandle = convertStreamJobHandle;
 		}
 	}
 }
