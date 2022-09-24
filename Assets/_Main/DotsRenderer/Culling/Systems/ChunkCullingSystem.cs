@@ -1,4 +1,5 @@
-﻿using Unity.Burst;
+﻿using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
@@ -16,7 +17,7 @@ namespace DotsRenderer
 		[NativeSetThreadIndex]
 		public int ThreadIndex;
 		[ReadOnly]
-		public ComponentTypeHandle<RenderMeshIndex> RenderMeshIndexHandle;
+		public SharedComponentTypeHandle<RenderMeshIndex> RenderMeshIndexHandle;
 		[ReadOnly]
 		public ComponentTypeHandle<LocalToWorld> LocalToWorldHandle;
 		[ReadOnly]
@@ -26,7 +27,7 @@ namespace DotsRenderer
 		[ReadOnly]
 		public NativeArray<Plane> FrustumPlanes;
 
-		public NativeArray<UnsafeStream> MatrixStreamByRenderMeshIndex;
+		public NativeArray<UnsafeStream> MatricesByRenderMeshIndex;
 		public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
 		{
 			var chunkWorldRenderBounds = chunk.GetChunkComponentData(ChunkWorldRenderBoundsHandle);
@@ -35,32 +36,31 @@ namespace DotsRenderer
 			if(!RMath.IsVisibleByCameraFrustum(FrustumPlanes, chunkWorldRenderBounds.AABB))
 				return;
 
-			var count = chunk.ChunkEntityCount;
-			if(count == 0)
+			var entityCount = chunk.ChunkEntityCount;
+			if(entityCount == 0)
 				return;
 
 			var worldRenderBoundsArray = chunk.GetNativeArray(WorldRenderBoundsHandle);
-			// These should be the same?
-			Debug.Assert(count == worldRenderBoundsArray.Length);
+			Debug.Assert(entityCount == worldRenderBoundsArray.Length);
 
-			var chunkRenderMeshIndex = chunk.GetChunkComponentData(RenderMeshIndexHandle);
+			var sharedComponentIndex = chunk.GetSharedComponentIndex(RenderMeshIndexHandle);
 			var localToWorldArray = chunk.GetNativeArray(LocalToWorldHandle);
 
-			ref var stream = ref MatrixStreamByRenderMeshIndex.ElementAsRef(chunkRenderMeshIndex.Value);
-			var writer = stream.AsWriter();
+			ref var matrices = ref MatricesByRenderMeshIndex.ElementAsRef(sharedComponentIndex);
+			var matrixWriter = matrices.AsWriter();
 
-			writer.BeginForEachIndex(ThreadIndex);
+			matrixWriter.BeginForEachIndex(ThreadIndex);
 			{
-				for(int i = 0; i < count; i++)
+				for(int i = 0; i < entityCount; i++)
 				{
 					if(RMath.IsVisibleByCameraFrustum(FrustumPlanes, worldRenderBoundsArray[i].AABB))
 					{
 						// Entity is visible, write its Matrix for rendering
-						writer.Write(localToWorldArray[i]);
+						matrixWriter.Write(localToWorldArray[i]);
 					}
 				}
 			}
-			writer.EndForEachIndex();
+			matrixWriter.EndForEachIndex();
 		}
 	}
 
@@ -107,6 +107,9 @@ namespace DotsRenderer
 			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
 			var renderMeshCount = RendererData.RenderMeshList.Count;
 
+			var renderMeshIndicesManaged = new List<RenderMeshIndex>();
+			EntityManager.GetAllUniqueSharedComponentData(renderMeshIndicesManaged);
+			
 			Job.WithCode(() =>
 			   {
 				   // Dispose previous frame Streams and Recreate them
@@ -130,10 +133,10 @@ namespace DotsRenderer
 			{
 				ChunkWorldRenderBoundsHandle = GetComponentTypeHandle<ChunkWorldRenderBounds>(),
 				LocalToWorldHandle = GetComponentTypeHandle<LocalToWorld>(),
-				RenderMeshIndexHandle = GetComponentTypeHandle<RenderMeshIndex>(),
+				RenderMeshIndexHandle = GetSharedComponentTypeHandle<RenderMeshIndex>(),
 				WorldRenderBoundsHandle = GetComponentTypeHandle<WorldRenderBounds>(),
 				FrustumPlanes = frustumPlanes,
-				MatrixStreamByRenderMeshIndex = matrixStreamByRenderMeshIndex,
+				MatricesByRenderMeshIndex = matrixStreamByRenderMeshIndex,
 			}.ScheduleParallel(ChunkCullingQuery);
 			
 			var matrixArrayByRenderMeshIndex = new NativeArray<UnsafeArray<float4x4>>(renderMeshCount, Allocator.TempJob);
@@ -145,12 +148,8 @@ namespace DotsRenderer
 				Output = matrixArrayByRenderMeshIndex,
 			}.Schedule(renderMeshCount, 16, chunkCullingHandle);
 
-			// TODO: Handle Rendering here
-			
 			FinalJobHandle = convertStreamJobHandle;
 
-			// TODO: Call ToArray on All Streams, Merge them
-			// TODO: Do the Rendering logic
 			// TODO: Make RenderMeshIndex a SharedComponent, update Queries etc.
 			// TODO: Add ChunkWorldRenderBounds automatically, spatial division
 			// TODO: Complete this demo! Check for performance!

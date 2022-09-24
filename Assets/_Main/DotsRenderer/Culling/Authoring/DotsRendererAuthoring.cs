@@ -34,7 +34,7 @@ namespace DotsRenderer
 			// TODO: Get SubMeshIndex properly
 			var renderMesh = new RenderMesh(mesh, materials[0], 0);
 			var renderMeshIndex = RendererData.RegisterRenderMeshAndGetIndex(renderMesh);
-			dstManager.AddComponentData(entity, renderMeshIndex);
+			dstManager.AddSharedComponentData(entity, renderMeshIndex);
 
 			if(IsStatic)
 			{

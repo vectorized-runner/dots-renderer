@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace DotsRenderer
 {
-	public readonly struct RenderMeshIndex : IComponentData, IEquatable<RenderMeshIndex>
+	public readonly struct RenderMeshIndex : ISharedComponentData, IEquatable<RenderMeshIndex>
 	{
 		public readonly int Value;
 
