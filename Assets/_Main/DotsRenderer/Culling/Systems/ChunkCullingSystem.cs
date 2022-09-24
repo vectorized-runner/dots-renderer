@@ -125,9 +125,8 @@ namespace DotsRenderer
 				   }
 
 				   // Add new streams to match the RenderMesh count
-				   while(matrixStreamByRenderMeshIndex.Length != renderMeshCount)
+				   while(matrixStreamByRenderMeshIndex.Length < renderMeshCount)
 				   {
-					   Debug.Assert(renderMeshCount > matrixStreamByRenderMeshIndex.Length);
 					   matrixStreamByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount,
 						   Allocator.TempJob));
 				   }
