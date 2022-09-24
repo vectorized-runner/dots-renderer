@@ -69,7 +69,7 @@ namespace DotsRenderer
 	public unsafe struct ConvertStreamDataToArrayJob : IJobParallelFor
 	{
 		[ReadOnly]
-		public NativeList<UnsafeStream> Input;
+		public NativeArray<UnsafeStream> Input;
 
 		[WriteOnly]
 		public NativeArray<UnsafeArray<float4x4>> Output;
@@ -156,7 +156,7 @@ namespace DotsRenderer
 				RenderMeshHandle = GetSharedComponentTypeHandle<RenderMesh>(),
 				WorldRenderBoundsHandle = GetComponentTypeHandle<WorldRenderBounds>(),
 				FrustumPlanes = frustumPlanes,
-				MatricesByRenderMeshIndex = matricesByRenderMeshIndex,
+				MatricesByRenderMeshIndex = matricesByRenderMeshIndex.AsDeferredJobArray(),
 			}.ScheduleParallel(ChunkCullingQuery, updateStreamsHandle);
 
 			var matrixArrayByRenderMeshIndex =
@@ -165,7 +165,7 @@ namespace DotsRenderer
 
 			var convertStreamJobHandle = new ConvertStreamDataToArrayJob
 			{
-				Input = matricesByRenderMeshIndex,
+				Input = matricesByRenderMeshIndex.AsDeferredJobArray(),
 				Output = matrixArrayByRenderMeshIndex,
 			}.Schedule(renderMeshCount, 16, chunkCullingHandle);
 
