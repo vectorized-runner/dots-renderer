@@ -1,9 +1,10 @@
 ﻿using System;
+using Unity.Entities;
 using UnityEngine;
 
 namespace DotsRenderer
 {
-	public readonly struct RenderMesh : IEquatable<RenderMesh>
+	public readonly struct RenderMesh : ISharedComponentData, IEquatable<RenderMesh>
 	{
 		public readonly Mesh Mesh;
 		public readonly Material Material;
@@ -18,7 +19,7 @@ namespace DotsRenderer
 
 		public bool Equals(RenderMesh other)
 		{
-			return Equals(Mesh, other.Mesh) && Equals(Material, other.Material) && SubMeshIndex == other.SubMeshIndex;
+			return Mesh == other.Mesh && Material == other.Material && SubMeshIndex == other.SubMeshIndex;
 		}
 
 		public override bool Equals(object obj)
