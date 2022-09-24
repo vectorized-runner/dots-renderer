@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 
 namespace DotsRenderer
@@ -19,6 +20,16 @@ namespace DotsRenderer
 		}
 
 		public ref T ElementAsRef(int index) => ref UnsafeUtility.ArrayElementAsRef<T>(Ptr, index);
+
+		public Span<T> AsSpan(int startIndex, int length)
+		{
+			return CollectionUtil.GetSpan(Ptr, startIndex, length);
+		}
+
+		public ReadOnlySpan<T> AsReadOnlySpan(int startIndex, int length)
+		{
+			return CollectionUtil.GetSpan(Ptr, startIndex, length);
+		}
 
 		public UnsafeArray(T* ptr, int length, Allocator allocator)
 		{

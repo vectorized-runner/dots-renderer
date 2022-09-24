@@ -83,12 +83,12 @@ namespace DotsRenderer
 
 	public partial class ChunkCullingSystem : SystemBase
 	{
+		public NativeArray<UnsafeArray<float4x4>> MatrixArrayByRenderMeshIndex;
+		public JobHandle FinalJobHandle { get; private set; }
+		
 		EntityQuery ChunkCullingQuery;
 		CalculateCameraFrustumPlanesSystem FrustumSystem;
 		NativeList<UnsafeStream> MatrixStreamByRenderMeshIndex;
-		NativeArray<UnsafeArray<float4x4>> MatrixArrayByRenderMeshIndex;
-
-		public JobHandle FinalJobHandle { get; private set; }
 
 		protected override void OnCreate()
 		{
