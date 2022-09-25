@@ -116,10 +116,18 @@ namespace DotsRenderer
 		}
 		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Span<T2> Reinterpret<T1, T2>(this Span<T1> items) where T2 : unmanaged where T1 : unmanaged
+		public static Span<TTo> Reinterpret<TFrom, TTo>(this Span<TFrom> items) where TTo : unmanaged where TFrom : unmanaged
 		{
-			Debug.Assert(UnsafeUtility.SizeOf<T1>() == UnsafeUtility.SizeOf<T2>());
-			return MemoryMarshal.Cast<T1, T2>(items);
+			Debug.Assert(UnsafeUtility.SizeOf<TFrom>() == UnsafeUtility.SizeOf<TTo>());
+			return MemoryMarshal.Cast<TFrom, TTo>(items);
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ref TTo Reinterpret<TFrom, TTo>(ref TFrom from) where TFrom : unmanaged where TTo : unmanaged
+		{
+			Debug.Assert(UnsafeUtility.SizeOf<TFrom>() == UnsafeUtility.SizeOf<TTo>());
+			return ref Unsafe.As<TFrom, TTo>(ref from);
+		}
+
 	}
 }
