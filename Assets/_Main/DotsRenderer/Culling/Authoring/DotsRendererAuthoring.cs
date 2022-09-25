@@ -34,15 +34,12 @@ namespace DotsRenderer
 					Extents = localBounds.extents,
 				}
 			};
+			dstManager.AddComponentData(entity, renderBounds);
 
 			if(IsStatic)
 			{
 				dstManager.AddComponent<StaticRenderTag>(entity);
 				dstManager.AddComponent<StaticRenderTag>(entity);
-			}
-			else
-			{
-				dstManager.AddComponentData(entity, renderBounds);
 			}
 		}
 
