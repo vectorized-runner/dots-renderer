@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace DotsRenderer
 {
-	[UpdateInGroup(typeof(PresentationSystemGroup), OrderFirst = true)]
+	[UpdateInGroup(typeof(CullingGroup))]
 	public partial class CalculateCameraFrustumPlanesSystem : SystemBase
 	{
 		public NativeArray<Plane> NativeFrustumPlanes;
