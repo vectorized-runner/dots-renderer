@@ -59,6 +59,9 @@ namespace DotsRenderer
 					DrawMeshInstanced(renderMesh, matrixSlice);
 				}
 			}
+			
+			// Dispose after using
+			matricesByRenderMeshIndex.Dispose();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
