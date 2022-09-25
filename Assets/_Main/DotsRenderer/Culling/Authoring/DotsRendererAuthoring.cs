@@ -39,7 +39,7 @@ namespace DotsRenderer
 			if(IsStatic)
 			{
 				dstManager.AddComponent<StaticRenderTag>(entity);
-				dstManager.AddComponent<StaticRenderTag>(entity);
+				dstManager.AddComponent<StaticRenderInitTag>(entity);
 			}
 		}
 
