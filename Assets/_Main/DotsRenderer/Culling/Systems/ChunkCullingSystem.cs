@@ -14,8 +14,6 @@ namespace DotsRenderer
 	[BurstCompile]
 	public struct ChunkCullingJob : IJobChunk
 	{
-		[NativeSetThreadIndex]
-		public int ThreadIndex;
 		[ReadOnly]
 		public SharedComponentTypeHandle<RenderMesh> RenderMeshHandle;
 		[ReadOnly]
@@ -49,8 +47,9 @@ namespace DotsRenderer
 
 			ref var matrices = ref MatricesByRenderMeshIndex.ElementAsRef(sharedComponentIndex);
 			var matrixWriter = matrices.AsWriter();
-
-			matrixWriter.BeginForEachIndex(ThreadIndex);
+			
+			// Use ChunkIndex instead of ThreadIndex, as two Chunks might get processed in the same thread
+			matrixWriter.BeginForEachIndex(chunkIndex);
 			{
 				for(int i = 0; i < entityCount; i++)
 				{
