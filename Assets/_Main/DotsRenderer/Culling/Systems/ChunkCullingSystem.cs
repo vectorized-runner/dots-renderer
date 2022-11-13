@@ -10,7 +10,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 namespace DotsRenderer
-{
+{	
 	[BurstCompile]
 	public struct ChunkCullingJob : IJobChunk
 	{
