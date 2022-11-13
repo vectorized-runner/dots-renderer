@@ -57,6 +57,10 @@ namespace DotsRenderer.Demo
 			}
 
 			var entityManager = EntityManager;
+
+			// Required for now
+			entityManager.CompleteAllJobs();
+			
 			var renderQuery = entityManager.CreateEntityQuery(typeof(WorldRenderBounds));
 
 			// Destroy existing objects first
