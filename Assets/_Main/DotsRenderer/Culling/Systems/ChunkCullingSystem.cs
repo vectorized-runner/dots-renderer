@@ -85,7 +85,6 @@ namespace DotsRenderer
 	[UpdateInGroup(typeof(CullingGroup))]
 	public partial class ChunkCullingSystem : SystemBase
 	{
-		// TODO-Renderer: Handle disposing this every frame
 		public NativeArray<UnsafeArray<float4x4>> MatrixArrayByRenderMeshIndex;
 		public JobHandle FinalJobHandle { get; private set; }
 		public List<RenderMesh> RenderMeshes { get; private set; }
@@ -116,10 +115,23 @@ namespace DotsRenderer
 			}
 
 			MatrixStreamByRenderMeshIndex.Dispose();
+			
+			DisposeMatrixArray();
 		}
 
+		private void DisposeMatrixArray()
+		{
+			if (MatrixArrayByRenderMeshIndex.IsCreated)
+			{
+				// No need to Dispose Internal UnsafeArrays because they were created with Temp memory.
+				MatrixArrayByRenderMeshIndex.Dispose();
+			}
+		}
+		
 		protected override void OnUpdate()
 		{
+			DisposeMatrixArray();
+			
 			// TODO-Renderer: Ensure no RenderMeshes are created between update of this system and end of update of the Renderer
 			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
 			var matricesByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
