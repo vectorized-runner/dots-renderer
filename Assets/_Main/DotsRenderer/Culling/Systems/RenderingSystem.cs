@@ -67,7 +67,7 @@ namespace DotsRenderer
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static void DrawMeshInstanced(in RenderMesh renderMesh, ReadOnlySpan<Matrix4x4> matrices)
 		{
-			Debug.Assert(matrices.Length > 0);
+			Debug.Assert(matrices.Length > 0 && matrices.Length <= 1023);
 			matrices.CopyTo(MatrixCache);
 			Graphics.DrawMeshInstanced(renderMesh.Mesh, renderMesh.SubMeshIndex, renderMesh.Material, MatrixCache,
 				matrices.Length);
