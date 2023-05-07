@@ -38,6 +38,23 @@ namespace DotsRenderer
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T> AsSpan<T>(this NativeList<T> list, int startIndex, int length) where T : unmanaged
+		{
+			var typedPtr = (T*)list.GetUnsafePtr();
+			var startAddress = typedPtr + startIndex;
+			return new Span<T>(startAddress, length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ReadOnlySpan<T> AsReadOnlySpan<T>(this NativeList<T> list, int startIndex, int length)
+			where T : unmanaged
+		{
+			var typedPtr = (T*)list.GetUnsafeReadOnlyPtr();
+			var startAddress = typedPtr + startIndex;
+			return new ReadOnlySpan<T>(startAddress, length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Span<T> AsSpan<T>(this NativeArray<T> array, int startIndex, int length) where T : unmanaged
 		{
 			var typedPtr = (T*)array.GetUnsafePtr();
