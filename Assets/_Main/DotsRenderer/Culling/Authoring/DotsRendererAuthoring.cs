@@ -36,8 +36,6 @@ namespace DotsRenderer
 			var renderMeshIndex = RendererData.RegisterRenderMeshAndGetIndex(renderMesh);
 			dstManager.AddComponentData(entity, renderMeshIndex);
 
-			dstManager.AddComponent<RenderEntityTag>(entity);
-
 			if(IsStatic)
 			{
 				dstManager.AddComponent<StaticRenderTag>(entity);
