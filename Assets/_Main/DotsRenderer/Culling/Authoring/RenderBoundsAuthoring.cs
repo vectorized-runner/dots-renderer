@@ -5,17 +5,29 @@ namespace DotsRenderer
 {
 	public class RenderBoundsAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		public RenderBounds RenderBounds;
+		public MeshRenderer MeshRenderer;
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			dstManager.AddComponentData(entity, RenderBounds);
+			var localBounds = MeshRenderer.localBounds;
+			Debug.Log($"Center: {localBounds.center}, Extents: {localBounds.extents}");
+
+			dstManager.AddComponentData(entity, new RenderBounds
+			{
+				AABB = new AABB
+				{
+					Center = localBounds.center,
+					Extents = localBounds.extents,
+				}
+			});
 		}
 
-		// TODO: This should behave well with Rotation/Scaling etc.
 		void OnDrawGizmos()
 		{
-			Gizmos.DrawWireCube(RenderBounds.AABB.Center, RenderBounds.AABB.Extents * 2f);
+			if(MeshRenderer == null)
+				return;
+
+			Gizmos.DrawWireCube(MeshRenderer.bounds.center, MeshRenderer.bounds.extents * 2f);
 		}
 	}
 }
