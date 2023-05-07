@@ -6,6 +6,7 @@ namespace DotsRenderer
 	public class DotsRendererAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		public MeshRenderer MeshRenderer;
+		public bool IsStatic;
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
@@ -21,6 +22,11 @@ namespace DotsRenderer
 				}
 			});
 			dstManager.AddComponentData(entity, new WorldRenderBounds());
+
+			if(IsStatic)
+			{
+				dstManager.AddComponent<StaticRenderTag>(entity);
+			}
 		}
 
 		void OnDrawGizmos()

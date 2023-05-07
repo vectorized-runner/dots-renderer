@@ -13,7 +13,7 @@ namespace DotsRenderer
 		{
 			// We can't use WithChangeFilter Translation, Rotation, Scale (allows up to 2 components)
 			Entities
-				.WithNone<StaticOptimizeRenderingTag>()
+				.WithNone<StaticRenderTag>()
 				.WithChangeFilter<LocalToWorld>()
 				.ForEach((ref RenderBounds renderBounds, in LocalToWorld localToWorld) =>
 				{
