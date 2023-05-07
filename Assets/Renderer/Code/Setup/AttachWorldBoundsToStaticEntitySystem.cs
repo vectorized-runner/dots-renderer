@@ -13,6 +13,7 @@ namespace DotsRenderer
 			ECBSystem = World.GetExistingSystem<BeginPresentationEntityCommandBufferSystem>();
 		}
 
+		// TODO: Do this at authoring time, wtf is this?
 		protected override void OnUpdate()
 		{
 			var commandBuffer = ECBSystem.CreateCommandBuffer();
