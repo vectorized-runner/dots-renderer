@@ -4,7 +4,7 @@ using Unity.Transforms;
 
 namespace DotsRenderer
 {
-	[UpdateInGroup(typeof(PresentationSystemGroup))]
+	[UpdateInGroup(typeof(CullingGroup))]
 	[UpdateAfter(typeof(CalculateCameraFrustumPlanesSystem))]
 	public partial class CalculateWorldRenderBoundsSystem : SystemBase
 	{

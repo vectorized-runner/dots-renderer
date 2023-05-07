@@ -3,7 +3,7 @@ using Unity.Transforms;
 
 namespace DotsRenderer
 {
-	[UpdateInGroup(typeof(PresentationSystemGroup))]
+	[UpdateInGroup(typeof(CullingGroup), OrderFirst = true)]
 	public partial class StripExcessComponentsFromStaticEntitiesSystem : SystemBase
 	{
 		EntityQuery StaticTranslationQuery;

@@ -82,6 +82,8 @@ namespace DotsRenderer
 		}
 	}
 
+	[UpdateAfter(typeof(CalculateChunkBoundsSystem))]
+	[UpdateInGroup(typeof(CullingGroup))]
 	public partial class ChunkCullingSystem : SystemBase
 	{
 		// TODO-Renderer: Handle disposing this every frame

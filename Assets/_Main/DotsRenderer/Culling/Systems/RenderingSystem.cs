@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 
 namespace DotsRenderer
 {
-	[UpdateInGroup(typeof(PresentationSystemGroup))]
-	[UpdateAfter(typeof(ChunkCullingSystem))]
+	[UpdateInGroup(typeof(CullingGroup), OrderLast = true)]
 	public partial class RenderingSystem : SystemBase
 	{
 		static Matrix4x4[] MatrixCache;

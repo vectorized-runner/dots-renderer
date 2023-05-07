@@ -38,7 +38,7 @@ namespace DotsRenderer
 		}
 	}
 
-	[UpdateInGroup(typeof(PresentationSystemGroup))]
+	[UpdateInGroup(typeof(CullingGroup))]
 	[UpdateAfter(typeof(AttachChunkBoundsSystem))]
 	public partial class CalculateChunkBoundsSystem : SystemBase
 	{
