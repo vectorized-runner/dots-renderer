@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	// TODO: Move Jobs to here, easier to see flow of logic, name the Jobs properly
 	// TODO: Use Static Gizmo Drawer

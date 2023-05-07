@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Debug = UnityEngine.Debug;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer.Archived
 {
 	public partial class CreateSpheresSystem : SystemBase
 	{

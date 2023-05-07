@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	/// <summary>
 	/// Objects with this tag will be Rendered with the Custom Renderer.

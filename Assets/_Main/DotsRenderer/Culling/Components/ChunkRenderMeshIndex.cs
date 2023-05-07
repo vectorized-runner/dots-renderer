@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Entities;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	public readonly struct ChunkRenderMeshIndex : IComponentData, IEquatable<ChunkRenderMeshIndex>
 	{

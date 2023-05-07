@@ -2,7 +2,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	public partial class CalculateCameraFrustumPlanesSystem : SystemBase
 	{

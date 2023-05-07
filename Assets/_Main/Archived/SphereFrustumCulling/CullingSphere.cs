@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer.Archived
 {
 	[GenerateAuthoringComponent]
 	public struct CullingSphere : IComponentData

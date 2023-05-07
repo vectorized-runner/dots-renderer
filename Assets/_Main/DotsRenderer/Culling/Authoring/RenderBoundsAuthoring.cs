@@ -1,7 +1,7 @@
 ﻿using Unity.Entities;
 using UnityEngine;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	public class RenderBoundsAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{

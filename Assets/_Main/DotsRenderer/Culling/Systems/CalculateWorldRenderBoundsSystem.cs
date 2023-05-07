@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using Unity.Transforms;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	public partial class CalculateWorldRenderBoundsSystem : SystemBase
 	{

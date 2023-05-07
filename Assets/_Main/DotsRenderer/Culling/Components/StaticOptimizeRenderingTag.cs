@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	[GenerateAuthoringComponent]
 	public struct StaticOptimizeRenderingTag : IComponentData

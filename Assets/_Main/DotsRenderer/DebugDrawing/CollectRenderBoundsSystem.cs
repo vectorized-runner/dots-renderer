@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public partial class CollectRenderBoundsSystem : SystemBase

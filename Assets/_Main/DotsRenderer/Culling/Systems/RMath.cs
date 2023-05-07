@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer
 {
 	public static class RMath
 	{

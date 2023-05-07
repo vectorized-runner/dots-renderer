@@ -5,7 +5,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace DotsLibrary.Rendering
+namespace DotsRenderer.Archived
 {
 	[UpdateAfter(typeof(CalculateCameraFrustumPlanesSystem))]
 	[UpdateBefore(typeof(SphereRenderingSystem))]
