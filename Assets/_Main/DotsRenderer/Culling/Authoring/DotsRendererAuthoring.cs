@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DotsRenderer
 {
-	public class RenderBoundsAuthoring : MonoBehaviour, IConvertGameObjectToEntity
+	public class DotsRendererAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		public MeshRenderer MeshRenderer;
 
