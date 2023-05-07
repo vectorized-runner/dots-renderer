@@ -10,22 +10,31 @@ namespace DotsRenderer
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			var localBounds = MeshRenderer.localBounds;
-			Debug.Log($"Center: {localBounds.center}, Extents: {localBounds.extents}");
-
-			dstManager.AddComponentData(entity, new RenderBounds
+			var rendererBounds = MeshRenderer.bounds;
+			dstManager.AddComponentData(entity, new WorldRenderBounds
 			{
 				AABB = new AABB
 				{
-					Center = localBounds.center,
-					Extents = localBounds.extents,
+					Center = rendererBounds.center,
+					Extents = rendererBounds.extents
 				}
 			});
-			dstManager.AddComponentData(entity, new WorldRenderBounds());
 
 			if(IsStatic)
 			{
 				dstManager.AddComponent<StaticRenderTag>(entity);
+			}
+			else
+			{
+				var localBounds = MeshRenderer.localBounds;
+				dstManager.AddComponentData(entity, new RenderBounds
+				{
+					AABB = new AABB
+					{
+						Center = localBounds.center,
+						Extents = localBounds.extents,
+					}
+				});
 			}
 		}
 
