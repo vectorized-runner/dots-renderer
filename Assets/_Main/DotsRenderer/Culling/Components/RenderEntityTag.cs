@@ -6,7 +6,7 @@ namespace DotsRenderer
 	/// Objects with this tag will be Rendered with the Custom Renderer.
 	/// </summary>
 	[GenerateAuthoringComponent]
-	public struct CustomRenderingTag : IComponentData
+	public struct RenderEntityTag : IComponentData
 	{
 	}
 }
