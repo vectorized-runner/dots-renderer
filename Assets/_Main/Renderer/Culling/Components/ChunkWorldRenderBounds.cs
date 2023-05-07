@@ -4,6 +4,6 @@ namespace DotsLibrary.Rendering
 {
 	public struct ChunkWorldRenderBounds : IComponentData
 	{
-		public AABB Value;
+		public AABB AABB;
 	}
 }

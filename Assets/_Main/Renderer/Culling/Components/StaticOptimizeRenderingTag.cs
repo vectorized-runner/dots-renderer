@@ -3,7 +3,7 @@
 namespace DotsLibrary.Rendering
 {
 	[GenerateAuthoringComponent]
-	public struct StaticOptimizeRendering : IComponentData
+	public struct StaticOptimizeRenderingTag : IComponentData
 	{
 	}
 }
