@@ -76,7 +76,7 @@ namespace DotsRenderer
 
 		public void Execute(int index)
 		{
-			var allocator = Allocator.TempJob;
+			var allocator = Allocator.Temp;
 			var nativeArray = Input[index].ToNativeArray<float4x4>(allocator);
 			Output[index] = new UnsafeArray<float4x4>(nativeArray.GetTypedPtr(), nativeArray.Length, allocator);
 		}
