@@ -20,6 +20,7 @@ namespace DotsRenderer
 					Extents = localBounds.extents,
 				}
 			});
+			dstManager.AddComponentData(entity, new WorldRenderBounds());
 		}
 
 		void OnDrawGizmos()
