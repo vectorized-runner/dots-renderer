@@ -5,7 +5,7 @@ namespace DotsLibrary.Rendering
 {
 	public class RenderBoundsAuthoring : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		public CRenderBounds RenderBounds;
+		public RenderBounds RenderBounds;
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{

@@ -27,10 +27,10 @@ namespace DotsLibrary.Rendering
 		public NativeArray<Plane> CameraFrustumPlanes;
 
 		[ReadOnly]
-		public ComponentTypeHandle<CChunkWorldRenderBounds> ChunkWorldRenderBoundsHandle;
+		public ComponentTypeHandle<ChunkWorldRenderBounds> ChunkWorldRenderBoundsHandle;
 
 		[ReadOnly]
-		public ComponentTypeHandle<CWorldRenderBounds> WorldRenderBoundsHandle;
+		public ComponentTypeHandle<WorldRenderBounds> WorldRenderBoundsHandle;
 
 		[ReadOnly]
 		public ComponentTypeHandle<LocalToWorld> LocalToWorldHandle;

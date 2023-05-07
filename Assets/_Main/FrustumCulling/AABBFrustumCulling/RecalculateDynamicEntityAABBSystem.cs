@@ -16,7 +16,7 @@ namespace DotsLibrary.Rendering
 			Entities
 				.WithNone<StaticOptimizeRendering>()
 				.WithChangeFilter<LocalToWorld>()
-				.ForEach((ref CRenderBounds renderBounds, in LocalToWorld localToWorld) =>
+				.ForEach((ref RenderBounds renderBounds, in LocalToWorld localToWorld) =>
 				{
 					var aabb = renderBounds.AABB;
 					// Scaled orientation (?)
@@ -44,7 +44,7 @@ namespace DotsLibrary.Rendering
 
 					var newExtents = new float3(newIi, newIj, newIk);
 
-					renderBounds = new CRenderBounds
+					renderBounds = new RenderBounds
 					{
 						AABB = new AABB
 						{
