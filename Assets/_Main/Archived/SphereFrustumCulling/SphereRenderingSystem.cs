@@ -14,6 +14,10 @@ namespace DotsLibrary.Rendering
 
 		protected override void OnCreate()
 		{
+			// Enable this again if you want to test this System!
+			Enabled = false;
+			return;
+
 			var spherePrimitive = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 			SphereMaterial = spherePrimitive.GetComponentInChildren<MeshRenderer>().sharedMaterial;
 			Sphere = spherePrimitive.GetComponentInChildren<MeshFilter>().sharedMesh;
@@ -26,8 +30,6 @@ namespace DotsLibrary.Rendering
 		{
 			SphereFrustumCullingSystem.CullingJobHandle.Complete();
 			var sphereMatrices = SphereFrustumCullingSystem.SphereMatricesToRender;
-
-			Debug.Log($"There are {sphereMatrices.Length} Spheres in the camera view.");
 
 			for(int i = 0; i < sphereMatrices.Length; i++)
 			{
