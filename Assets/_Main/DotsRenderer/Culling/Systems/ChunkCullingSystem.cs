@@ -16,8 +16,6 @@ namespace DotsRenderer
 		[NativeSetThreadIndex]
 		public int ThreadIndex;
 		[ReadOnly]
-		public NativeArray<UnsafeStream> MatrixStreamByRenderMeshIndex;
-		[ReadOnly]
 		public ComponentTypeHandle<RenderMeshIndex> RenderMeshIndexHandle;
 		[ReadOnly]
 		public ComponentTypeHandle<LocalToWorld> LocalToWorldHandle;
@@ -28,6 +26,7 @@ namespace DotsRenderer
 		[ReadOnly]
 		public NativeArray<Plane> FrustumPlanes;
 
+		public NativeArray<UnsafeStream> MatrixStreamByRenderMeshIndex;
 		public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
 		{
 			var chunkWorldRenderBounds = chunk.GetChunkComponentData(ChunkWorldRenderBoundsHandle);
