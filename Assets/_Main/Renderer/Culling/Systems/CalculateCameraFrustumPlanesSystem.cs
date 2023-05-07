@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DotsLibrary.Rendering
 {
-	public partial class CalculateFrustumPlanesSystem : SystemBase
+	public partial class CalculateCameraFrustumPlanesSystem : SystemBase
 	{
 		public NativeArray<Plane> NativeFrustumPlanes;
 

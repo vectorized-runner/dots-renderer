@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace DotsLibrary.Rendering
 {
-	[UpdateAfter(typeof(CalculateFrustumPlanesSystem))]
+	[UpdateAfter(typeof(CalculateCameraFrustumPlanesSystem))]
 	[UpdateBefore(typeof(SphereRenderingSystem))]
 	public partial class SphereFrustumCullingSystem : SystemBase
 	{
@@ -28,7 +28,7 @@ namespace DotsLibrary.Rendering
 		protected override void OnUpdate()
 		{
 			var spherePositions = new NativeList<float3>(Allocator.TempJob);
-			var frustumPlanes = World.GetExistingSystem<CalculateFrustumPlanesSystem>().NativeFrustumPlanes;
+			var frustumPlanes = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>().NativeFrustumPlanes;
 
 			Entities
 				.ForEach((in CullingSphere cullingSphere) =>
