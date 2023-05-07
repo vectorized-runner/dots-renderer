@@ -2,6 +2,7 @@
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -64,7 +65,24 @@ namespace DotsRenderer
 		}
 	}
 
-	public partial class ChunkCullingSystem : SystemBase
+	[BurstCompile]
+	public unsafe struct ConvertStreamDataToArrayJob : IJobParallelFor
+	{
+		[ReadOnly]
+		public NativeList<UnsafeStream> Input;
+
+		[WriteOnly]
+		public NativeArray<UnsafeArray<float4x4>> Output;
+
+		public void Execute(int index)
+		{
+			var allocator = Allocator.TempJob;
+			var nativeArray = Input[index].ToNativeArray<float4x4>(allocator);
+			Output[index] = new UnsafeArray<float4x4>(nativeArray.GetTypedPtr(), nativeArray.Length, allocator);
+		}
+	}
+
+	public unsafe partial class ChunkCullingSystem : SystemBase
 	{
 		EntityQuery ChunkCullingQuery;
 		CalculateCameraFrustumPlanesSystem FrustumSystem;
@@ -85,6 +103,7 @@ namespace DotsRenderer
 		{
 			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
 			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
+			var renderMeshCount = RendererData.RenderMeshList.Count;
 
 			// TODO: See if we can Clear instead of disposing?
 			Job.WithCode(() =>
@@ -98,8 +117,6 @@ namespace DotsRenderer
 				   }
 				   
 				   // Add new streams to match the RenderMesh count
-				   var renderMeshCount = RendererData.RenderMeshList.Count;
-
 				   while(matrixStreamByRenderMeshIndex.Length != renderMeshCount)
 				   {
 					   Debug.Assert(renderMeshCount > matrixStreamByRenderMeshIndex.Length);
@@ -108,7 +125,7 @@ namespace DotsRenderer
 			   })
 			   .Schedule();
 
-			new ChunkCullingJob
+			var chunkCullingHandle = new ChunkCullingJob
 			{
 				ChunkWorldRenderBoundsHandle = GetComponentTypeHandle<ChunkWorldRenderBounds>(),
 				LocalToWorldHandle = GetComponentTypeHandle<LocalToWorld>(),
@@ -117,25 +134,16 @@ namespace DotsRenderer
 				FrustumPlanes = frustumPlanes,
 				MatrixStreamByRenderMeshIndex = matrixStreamByRenderMeshIndex,
 			}.ScheduleParallel(ChunkCullingQuery);
+			
+			var matrixArrayByRenderMeshIndex = new NativeArray<UnsafeArray<float4x4>>(renderMeshCount, Allocator.TempJob);
 
-			// TODO: Use UnsafeArray here.
-			/*
-			Job.WithCode(() =>
-			   {
-				   // For each chunk
-				   // Chunk's RenderMeshIndex, 
-				   
-				   for(int i = 0; i < matrixStreamByRenderMeshIndex.Length; i++)
-				   {
-					   var streamToArray = matrixStreamByRenderMeshIndex[i].ToNativeArray<float4x4>(Allocator.TempJob);
-					   asd[i] = streamToArray;
+			var convertStreamJobHandle = new ConvertStreamDataToArrayJob
+			{
+				Input = matrixStreamByRenderMeshIndex,
+				Output = matrixArrayByRenderMeshIndex,
+			}.Schedule(renderMeshCount, 4, chunkCullingHandle);
 
-					   // Call ToArray on the Stream
-					   // Do the rendering
-				   }
-			   })
-			   .Schedule();
-			*/
+			Dependency = convertStreamJobHandle;
 
 			// TODO: Call ToArray on All Streams, Merge them
 			// TODO: Do the Rendering logic
