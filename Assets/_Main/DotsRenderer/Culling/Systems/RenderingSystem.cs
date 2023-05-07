@@ -13,10 +13,13 @@ namespace DotsRenderer
 	{
 		static Matrix4x4[] MatrixCache;
 		CullingSystem CullingSystem;
+		
+		const int MaxDrawCountPerBatch = 1023;
 
 		protected override void OnCreate()
 		{
 			CullingSystem = World.GetExistingSystem<CullingSystem>();
+			MatrixCache = new Matrix4x4[MaxDrawCountPerBatch];
 		}
 
 		protected override void OnUpdate()
@@ -38,28 +41,30 @@ namespace DotsRenderer
 				if(drawCount == 0)
 					continue;
 				
-				const int maxDrawCountPerBatch = 1023;
 				var renderMesh = renderMeshes[renderMeshIndex];
-				var fullBatchCount = drawCount / maxDrawCountPerBatch;
-				var lastBatchDrawCount = drawCount % maxDrawCountPerBatch;
+				var fullBatchCount = drawCount / MaxDrawCountPerBatch;
 				ReadOnlySpan<LocalToWorld> localToWorldSlice;
 				int batchIndex;
 
 				for(batchIndex = 0; batchIndex < fullBatchCount; batchIndex++)
 				{
-					localToWorldSlice =
-						matrices.AsReadOnlySpan(batchIndex * maxDrawCountPerBatch, maxDrawCountPerBatch);
+					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, MaxDrawCountPerBatch);
 					DrawMeshInstanced(renderMesh, localToWorldSlice);
 				}
 
-				localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * maxDrawCountPerBatch, lastBatchDrawCount);
-				DrawMeshInstanced(renderMesh, localToWorldSlice);
+				var lastBatchDrawCount = drawCount % MaxDrawCountPerBatch;
+				if(lastBatchDrawCount > 0)
+				{
+					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, lastBatchDrawCount);
+					DrawMeshInstanced(renderMesh, localToWorldSlice);
+				}
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static void DrawMeshInstanced(in RenderMesh renderMesh, ReadOnlySpan<LocalToWorld> matrices)
 		{
+			Debug.Assert(matrices.Length > 0);
 			var typeCast = MemoryMarshal.Cast<LocalToWorld, Matrix4x4>(matrices);
 			typeCast.CopyTo(MatrixCache);
 			Graphics.DrawMeshInstanced(renderMesh.Mesh, renderMesh.SubMeshIndex, renderMesh.Material, MatrixCache,
