@@ -14,6 +14,18 @@ namespace DotsRenderer
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ref T ElementAsRef<T>(this NativeList<T> list, int index) where T : unmanaged
+		{
+			return ref UnsafeUtility.ArrayElementAsRef<T>(list.GetUnsafePtr(), index);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ref readonly T ElementAsReadonlyRef<T>(this NativeList<T> list, int index) where T : unmanaged
+		{
+			return ref UnsafeUtility.ArrayElementAsRef<T>(list.GetUnsafeReadOnlyPtr(), index);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ref T ElementAsRef<T>(this NativeArray<T> array, int index) where T : unmanaged
 		{
 			return ref UnsafeUtility.ArrayElementAsRef<T>(array.GetUnsafePtr(), index);
