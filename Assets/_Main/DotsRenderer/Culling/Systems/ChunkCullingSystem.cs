@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs.LowLevel.Unsafe;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -54,6 +55,7 @@ namespace DotsRenderer
 				{
 					if(RMath.IsVisibleByCameraFrustum(FrustumPlanes, worldRenderBoundsArray[i].AABB))
 					{
+						// Entity is visible, write its Matrix for rendering
 						writer.Write(localToWorldArray[i]);
 					}
 				}
@@ -87,7 +89,7 @@ namespace DotsRenderer
 			// TODO: See if we can Clear instead of disposing?
 			Job.WithCode(() =>
 			   {
-				   // Dispose previous frame lists
+				   // Dispose previous frame Streams
 				   for(int i = 0; i < matrixStreamByRenderMeshIndex.Length; i++)
 				   {
 					   ref var matrices = ref matrixStreamByRenderMeshIndex.ElementAsRef(i);
@@ -115,6 +117,25 @@ namespace DotsRenderer
 				FrustumPlanes = frustumPlanes,
 				MatrixStreamByRenderMeshIndex = matrixStreamByRenderMeshIndex,
 			}.ScheduleParallel(ChunkCullingQuery);
+
+			// TODO: Use UnsafeArray here.
+			/*
+			Job.WithCode(() =>
+			   {
+				   // For each chunk
+				   // Chunk's RenderMeshIndex, 
+				   
+				   for(int i = 0; i < matrixStreamByRenderMeshIndex.Length; i++)
+				   {
+					   var streamToArray = matrixStreamByRenderMeshIndex[i].ToNativeArray<float4x4>(Allocator.TempJob);
+					   asd[i] = streamToArray;
+
+					   // Call ToArray on the Stream
+					   // Do the rendering
+				   }
+			   })
+			   .Schedule();
+			*/
 
 			// TODO: Call ToArray on All Streams, Merge them
 			// TODO: Do the Rendering logic
