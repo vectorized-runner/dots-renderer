@@ -5,7 +5,7 @@ using Unity.Collections.LowLevel.Unsafe;
 
 namespace DotsRenderer
 {
-	public static unsafe class NativeArrayUtilities
+	public static unsafe class CollectionUtil
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T* GetTypedPtr<T>(this NativeArray<T> array) where T : unmanaged
@@ -70,13 +70,13 @@ namespace DotsRenderer
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		static ReadOnlySpan<T> GetReadOnlySpan<T>(T* ptr, int startIndex, int length) where T : unmanaged
+		public static ReadOnlySpan<T> GetReadOnlySpan<T>(T* ptr, int startIndex, int length) where T : unmanaged
 		{
 			return new ReadOnlySpan<T>(ptr + startIndex, length);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		static Span<T> GetSpan<T>(T* ptr, int startIndex, int length) where T : unmanaged
+		public static Span<T> GetSpan<T>(T* ptr, int startIndex, int length) where T : unmanaged
 		{
 			return new Span<T>(ptr + startIndex, length);
 		}
