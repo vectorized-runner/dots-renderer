@@ -8,5 +8,6 @@ namespace DotsRenderer.PerfTesting
 		public Entity Entity;
 		public int CountX;
 		public int CountZ;
+		public float Spacing;
 	}
 }
