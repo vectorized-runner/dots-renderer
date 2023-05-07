@@ -14,16 +14,6 @@ namespace DotsRenderer
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
-			var rendererBounds = MeshRenderer.bounds;
-			dstManager.AddComponentData(entity, new WorldRenderBounds
-			{
-				AABB = new AABB
-				{
-					Center = rendererBounds.center,
-					Extents = rendererBounds.extents
-				}
-			});
-
 			var materials = new List<Material>();
 			MeshRenderer.GetSharedMaterials(materials);
 
@@ -35,21 +25,24 @@ namespace DotsRenderer
 			var renderMesh = new RenderMesh(mesh, materials[0], 0);
 			dstManager.AddSharedComponentData(entity, renderMesh);
 
+			var localBounds = MeshRenderer.localBounds;
+			var renderBounds = new RenderBounds
+			{
+				AABB = new AABB
+				{
+					Center = localBounds.center,
+					Extents = localBounds.extents,
+				}
+			};
+
 			if(IsStatic)
 			{
+				dstManager.AddComponent<StaticRenderTag>(entity);
 				dstManager.AddComponent<StaticRenderTag>(entity);
 			}
 			else
 			{
-				var localBounds = MeshRenderer.localBounds;
-				dstManager.AddComponentData(entity, new RenderBounds
-				{
-					AABB = new AABB
-					{
-						Center = localBounds.center,
-						Extents = localBounds.extents,
-					}
-				});
+				dstManager.AddComponentData(entity, renderBounds);
 			}
 		}
 
