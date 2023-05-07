@@ -47,7 +47,7 @@ namespace DotsRenderer
 		protected override void OnCreate()
 		{
 			ChangedChunksQuery = GetEntityQuery(ComponentType.ReadWrite<ChunkWorldRenderBounds>());
-			// We only need to recalculate if any of the 'WorldRenderBounds' of Entities is changed
+			// We only need to recalculate ChunkWorldRenderBounds if any of the 'WorldRenderBounds' of Entities is changed
 			ChangedChunksQuery.SetChangedVersionFilter(ComponentType.ReadOnly<WorldRenderBounds>());
 		}
 
