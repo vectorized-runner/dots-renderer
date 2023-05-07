@@ -1,5 +1,5 @@
 {
-    "name": "DotsRenderer",
+    "name": "Renderer",
     "rootNamespace": "",
     "references": [
         "Unity.Mathematics",
