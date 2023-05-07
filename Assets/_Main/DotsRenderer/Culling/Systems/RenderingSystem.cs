@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Unity.Entities;
@@ -12,8 +11,6 @@ namespace DotsRenderer
 	[UpdateAfter(typeof(CullingSystem))]
 	public partial class RenderingSystem : SystemBase
 	{
-		public List<RenderMesh> UniqueRenderMeshes;
-
 		static Matrix4x4[] MatrixCache;
 		CullingSystem CullingSystem;
 
@@ -24,6 +21,7 @@ namespace DotsRenderer
 
 		protected override void OnUpdate()
 		{
+			var renderMeshes = RendererData.RenderMeshList;
 			var matricesByRenderMeshIndex = CullingSystem.MatricesByRenderMeshIndex;
 			var renderMeshCount = matricesByRenderMeshIndex.Length;
 
@@ -31,7 +29,7 @@ namespace DotsRenderer
 			{
 				const int maxDrawCountPerBatch = 1023;
 				var matrices = matricesByRenderMeshIndex[renderMeshIndex];
-				var renderMesh = UniqueRenderMeshes[renderMeshIndex];
+				var renderMesh = renderMeshes[renderMeshIndex];
 				var drawCount = matrices.Length;
 				var fullBatchCount = drawCount / maxDrawCountPerBatch;
 				var lastBatchDrawCount = drawCount % maxDrawCountPerBatch;
@@ -40,7 +38,8 @@ namespace DotsRenderer
 
 				for(batchIndex = 0; batchIndex < fullBatchCount; batchIndex++)
 				{
-					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * maxDrawCountPerBatch, maxDrawCountPerBatch);
+					localToWorldSlice =
+						matrices.AsReadOnlySpan(batchIndex * maxDrawCountPerBatch, maxDrawCountPerBatch);
 					DrawMeshInstanced(renderMesh, localToWorldSlice);
 				}
 
