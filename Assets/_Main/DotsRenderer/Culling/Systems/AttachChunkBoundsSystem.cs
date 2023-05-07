@@ -2,6 +2,8 @@
 
 namespace DotsRenderer
 {
+	[UpdateInGroup(typeof(PresentationSystemGroup))]
+	[UpdateAfter(typeof(CalculateCameraFrustumPlanesSystem))]
 	public partial class AttachChunkBoundsSystem : SystemBase
 	{
 		EntityQuery RequireChunkBoundsQuery;
