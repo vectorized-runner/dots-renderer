@@ -22,7 +22,7 @@ namespace DotsRenderer
 
 		protected override void OnUpdate()
 		{
-			// TODO-Renderer: Find a way to not call complete on this. Even 1-frame delayed update is ok!
+			// TODO-Renderer: Find a way to not call complete on this. Maybe 1 frame delayed rendering is ok?
 			CullingSystem.FinalJobHandle.Complete();
 
 			var renderMeshes = CullingSystem.RenderMeshes;
@@ -41,22 +41,23 @@ namespace DotsRenderer
 				
 				var renderMesh = renderMeshes[renderMeshIndex];
 				var fullBatchCount = drawCount / MaxDrawCountPerBatch;
-				ReadOnlySpan<Matrix4x4> matrixSlice;
 				int batchIndex;
 
 				for(batchIndex = 0; batchIndex < fullBatchCount; batchIndex++)
 				{
-					matrixSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, MaxDrawCountPerBatch)
-					                      .Reinterpret<float4x4, Matrix4x4>();
-					DrawMeshInstanced(renderMesh, matrixSlice);
+					var span = matrices.AsSpan(batchIndex * MaxDrawCountPerBatch, MaxDrawCountPerBatch);
+					var m4x4 = span.Reinterpret<float4x4, Matrix4x4>();
+					AssertValidMatrices(m4x4);
+					DrawMeshInstanced(renderMesh, m4x4);
 				}
-
+				
 				var lastBatchDrawCount = drawCount % MaxDrawCountPerBatch;
 				if(lastBatchDrawCount > 0)
 				{
-					matrixSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, lastBatchDrawCount)
-					                            .Reinterpret<float4x4, Matrix4x4>();
-					DrawMeshInstanced(renderMesh, matrixSlice);
+					var span = matrices.AsSpan(batchIndex * MaxDrawCountPerBatch, lastBatchDrawCount);
+					var m4x4 = span.Reinterpret<float4x4, Matrix4x4>();
+					AssertValidMatrices(m4x4);
+					DrawMeshInstanced(renderMesh, m4x4);
 				}
 			}
 		}
@@ -68,6 +69,21 @@ namespace DotsRenderer
 			matrices.CopyTo(MatrixCache);
 			Graphics.DrawMeshInstanced(renderMesh.Mesh, renderMesh.SubMeshIndex, renderMesh.Material, MatrixCache,
 				matrices.Length);
+		}
+
+		public static void AssertValidMatrices(Span<Matrix4x4> matrices)
+		{
+			foreach (ref var matrix in matrices)
+			{
+				ref var f4x4 = ref Unsafe.As<Matrix4x4, float4x4>(ref matrix);
+				AssertValid(f4x4.c3.xyz);
+			}
+		}
+
+		public static void AssertValid(float3 position)
+		{
+			Debug.Assert(!math.any(math.isnan(position)));
+			Debug.Assert(!math.any(math.isinf(position)));
 		}
 	}
 }
