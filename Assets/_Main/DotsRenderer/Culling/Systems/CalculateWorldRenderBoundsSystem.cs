@@ -4,6 +4,7 @@ using Unity.Transforms;
 
 namespace DotsRenderer
 {
+	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public partial class CalculateWorldRenderBoundsSystem : SystemBase
 	{
 		/// <summary>
@@ -15,7 +16,8 @@ namespace DotsRenderer
 			Entities
 				.WithNone<StaticRenderTag>()
 				.WithChangeFilter<LocalToWorld>()
-				.ForEach((ref RenderBounds renderBounds, in LocalToWorld localToWorld) =>
+				.ForEach((ref WorldRenderBounds worldRenderBounds, in RenderBounds renderBounds,
+				          in LocalToWorld localToWorld) =>
 				{
 					var aabb = renderBounds.AABB;
 					// Scaled orientation (?)
@@ -41,14 +43,15 @@ namespace DotsRenderer
 						math.abs(math.dot(forward, localUp)) +
 						math.abs(math.dot(forward, localForward));
 
-					var newExtents = new float3(newIi, newIj, newIk);
+					var worldExtents = new float3(newIi, newIj, newIk);
+					var center = localToWorld.Position;
 
-					renderBounds = new RenderBounds
+					worldRenderBounds = new WorldRenderBounds
 					{
 						AABB = new AABB
 						{
-							Center = localToWorld.Position,
-							Extents = newExtents
+							Center = center,
+							Extents = worldExtents
 						}
 					};
 				})
