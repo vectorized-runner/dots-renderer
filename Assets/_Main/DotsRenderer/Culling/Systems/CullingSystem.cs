@@ -32,6 +32,16 @@ namespace DotsRenderer
 			var frustumPlanes = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>().NativeFrustumPlanes;
 			var matricesByRenderMeshIndex = MatricesByRenderMeshIndex;
 
+			// Clear previous frame lists
+			Job.WithCode(() =>
+			   {
+				   for(int i = 0; i < matricesByRenderMeshIndex.Length; i++)
+				   {
+					   matricesByRenderMeshIndex[i].Clear();
+				   }
+			   })
+			   .Schedule();
+			
 			Entities.ForEach((in WorldRenderBounds worldRenderBounds,
 			                  in RenderMeshIndex renderMeshIndex,
 			                  in LocalToWorld localToWorld) =>
