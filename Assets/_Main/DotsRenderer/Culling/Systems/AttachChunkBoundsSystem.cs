@@ -10,9 +10,10 @@ namespace DotsRenderer
 
 		protected override void OnCreate()
 		{
+			// Add to Chunks with WorldRenderBounds, but no ChunkWorldRenderBounds
 			RequireChunkBoundsQuery =
 				GetEntityQuery(
-					ComponentType.ReadOnly<SceneSection>(),
+					ComponentType.ReadOnly<WorldRenderBounds>(),
 					ComponentType.ChunkComponentExclude<ChunkWorldRenderBounds>());
 		}
 
