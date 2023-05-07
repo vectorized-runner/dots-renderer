@@ -1,6 +1,7 @@
 ﻿using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace DotsRenderer
 	[UpdateAfter(typeof(CalculateWorldRenderBoundsSystem))]
 	public partial class CullingSystem : SystemBase
 	{
+		public JobHandle FinalJobHandle;
 		public NativeList<UnsafeList<LocalToWorld>> MatricesByRenderMeshIndex;
 
 		protected override void OnCreate()
@@ -66,6 +68,8 @@ namespace DotsRenderer
 				        }
 			        })
 			        .Schedule();
+
+			FinalJobHandle = Dependency;
 		}
 	}
 }
