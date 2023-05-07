@@ -17,7 +17,8 @@ namespace DotsRenderer
 			Entities
 				.WithNone<StaticRenderTag>()
 				.WithChangeFilter<LocalToWorld>()
-				.ForEach((ref WorldRenderBounds worldRenderBounds, in RenderBounds renderBounds,
+				.ForEach((ref WorldRenderBounds worldRenderBounds, 
+				          in RenderBounds renderBounds,
 				          in LocalToWorld localToWorld) =>
 				{
 					var aabb = renderBounds.AABB;

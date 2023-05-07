@@ -16,7 +16,6 @@ namespace DotsRenderer
 
 		protected override void OnCreate()
 		{
-			// TODO: We need to Initialize and Grow this when required!
 			MatricesByRenderMeshIndex = new NativeList<UnsafeList<LocalToWorld>>(Allocator.Persistent);
 		}
 
