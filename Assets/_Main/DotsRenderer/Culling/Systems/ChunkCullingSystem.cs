@@ -28,6 +28,7 @@ namespace DotsRenderer
 		public NativeArray<Plane> FrustumPlanes;
 
 		public NativeArray<UnsafeStream> MatricesByRenderMeshIndex;
+
 		public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
 		{
 			var chunkWorldRenderBounds = chunk.GetChunkComponentData(ChunkWorldRenderBoundsHandle);
@@ -86,7 +87,7 @@ namespace DotsRenderer
 		public NativeArray<UnsafeArray<float4x4>> MatrixArrayByRenderMeshIndex;
 		public JobHandle FinalJobHandle { get; private set; }
 		public List<RenderMesh> RenderMeshes { get; private set; }
-		
+
 		EntityQuery ChunkCullingQuery;
 		CalculateCameraFrustumPlanesSystem FrustumSystem;
 		NativeList<UnsafeStream> MatrixStreamByRenderMeshIndex;
@@ -112,7 +113,7 @@ namespace DotsRenderer
 			RenderMeshes.Clear();
 			EntityManager.GetAllUniqueSharedComponentData(RenderMeshes);
 			var renderMeshCount = RenderMeshes.Count;
-			
+
 			Job.WithCode(() =>
 			   {
 				   // Dispose previous frame Streams and Recreate them
@@ -122,12 +123,13 @@ namespace DotsRenderer
 					   matrices.Dispose();
 					   matrices = new UnsafeStream(JobsUtility.MaxJobThreadCount, Allocator.TempJob);
 				   }
-				   
+
 				   // Add new streams to match the RenderMesh count
 				   while(matrixStreamByRenderMeshIndex.Length != renderMeshCount)
 				   {
 					   Debug.Assert(renderMeshCount > matrixStreamByRenderMeshIndex.Length);
-					   matrixStreamByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount, Allocator.TempJob));
+					   matrixStreamByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount,
+						   Allocator.TempJob));
 				   }
 			   })
 			   .Schedule();
@@ -141,10 +143,11 @@ namespace DotsRenderer
 				FrustumPlanes = frustumPlanes,
 				MatricesByRenderMeshIndex = matrixStreamByRenderMeshIndex,
 			}.ScheduleParallel(ChunkCullingQuery);
-			
-			var matrixArrayByRenderMeshIndex = new NativeArray<UnsafeArray<float4x4>>(renderMeshCount, Allocator.TempJob);
+
+			var matrixArrayByRenderMeshIndex =
+				new NativeArray<UnsafeArray<float4x4>>(renderMeshCount, Allocator.TempJob);
 			MatrixArrayByRenderMeshIndex = matrixArrayByRenderMeshIndex;
-			
+
 			var convertStreamJobHandle = new ConvertStreamDataToArrayJob
 			{
 				Input = matrixStreamByRenderMeshIndex,
@@ -152,10 +155,6 @@ namespace DotsRenderer
 			}.Schedule(renderMeshCount, 16, chunkCullingHandle);
 
 			FinalJobHandle = convertStreamJobHandle;
-
-			// TODO: Make RenderMeshIndex a SharedComponent, update Queries etc.
-			// TODO: Add ChunkWorldRenderBounds automatically, spatial division
-			// TODO: Complete this demo! Check for performance!
 		}
 	}
 }
