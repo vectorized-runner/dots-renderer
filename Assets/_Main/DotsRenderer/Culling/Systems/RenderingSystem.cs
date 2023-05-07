@@ -44,32 +44,31 @@ namespace DotsRenderer
 				
 				var renderMesh = renderMeshes[renderMeshIndex];
 				var fullBatchCount = drawCount / MaxDrawCountPerBatch;
-				ReadOnlySpan<LocalToWorld> localToWorldSlice;
+				ReadOnlySpan<Matrix4x4> matrixSlice;
 				int batchIndex;
 
 				for(batchIndex = 0; batchIndex < fullBatchCount; batchIndex++)
 				{
-					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, MaxDrawCountPerBatch)
-					                            .Reinterpret<float4x4, LocalToWorld>();
-					DrawMeshInstanced(renderMesh, localToWorldSlice);
+					matrixSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, MaxDrawCountPerBatch)
+					                      .Reinterpret<float4x4, Matrix4x4>();
+					DrawMeshInstanced(renderMesh, matrixSlice);
 				}
 
 				var lastBatchDrawCount = drawCount % MaxDrawCountPerBatch;
 				if(lastBatchDrawCount > 0)
 				{
-					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, lastBatchDrawCount)
-					                            .Reinterpret<float4x4, LocalToWorld>();
-					DrawMeshInstanced(renderMesh, localToWorldSlice);
+					matrixSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, lastBatchDrawCount)
+					                            .Reinterpret<float4x4, Matrix4x4>();
+					DrawMeshInstanced(renderMesh, matrixSlice);
 				}
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		static void DrawMeshInstanced(in RenderMesh renderMesh, ReadOnlySpan<LocalToWorld> matrices)
+		static void DrawMeshInstanced(in RenderMesh renderMesh, ReadOnlySpan<Matrix4x4> matrices)
 		{
 			Debug.Assert(matrices.Length > 0);
-			var typeCast = MemoryMarshal.Cast<LocalToWorld, Matrix4x4>(matrices);
-			typeCast.CopyTo(MatrixCache);
+			matrices.CopyTo(MatrixCache);
 			Graphics.DrawMeshInstanced(renderMesh.Mesh, renderMesh.SubMeshIndex, renderMesh.Material, MatrixCache,
 				matrices.Length);
 		}
