@@ -108,7 +108,7 @@ namespace DotsRenderer
 		{
 			// TODO-Renderer: Ensure no RenderMeshes are created between update of this system and end of update of the Renderer
 			var frustumPlanes = FrustumSystem.NativeFrustumPlanes;
-			var matrixStreamByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
+			var matricesByRenderMeshIndex = MatrixStreamByRenderMeshIndex;
 
 			RenderMeshes.Clear();
 			EntityManager.GetAllUniqueSharedComponentData(RenderMeshes);
@@ -119,17 +119,17 @@ namespace DotsRenderer
 				Job.WithCode(() =>
 			   {
 				   // Dispose previous frame Streams and Recreate them
-				   for(int i = 0; i < matrixStreamByRenderMeshIndex.Length; i++)
+				   for(int i = 0; i < matricesByRenderMeshIndex.Length; i++)
 				   {
-					   ref var matrices = ref matrixStreamByRenderMeshIndex.ElementAsRef(i);
+					   ref var matrices = ref matricesByRenderMeshIndex.ElementAsRef(i);
 					   matrices.Dispose();
 					   matrices = new UnsafeStream(JobsUtility.MaxJobThreadCount, Allocator.TempJob);
 				   }
 
 				   // Add new streams to match the RenderMesh count
-				   while(matrixStreamByRenderMeshIndex.Length < renderMeshCount)
+				   while(matricesByRenderMeshIndex.Length < renderMeshCount)
 				   {
-					   matrixStreamByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount,
+					   matricesByRenderMeshIndex.Add(new UnsafeStream(JobsUtility.MaxJobThreadCount,
 						   Allocator.TempJob));
 				   }
 			   })
@@ -142,7 +142,7 @@ namespace DotsRenderer
 				RenderMeshHandle = GetSharedComponentTypeHandle<RenderMesh>(),
 				WorldRenderBoundsHandle = GetComponentTypeHandle<WorldRenderBounds>(),
 				FrustumPlanes = frustumPlanes,
-				MatricesByRenderMeshIndex = matrixStreamByRenderMeshIndex,
+				MatricesByRenderMeshIndex = matricesByRenderMeshIndex,
 			}.ScheduleParallel(ChunkCullingQuery, updateStreamsHandle);
 
 			var matrixArrayByRenderMeshIndex =
@@ -151,7 +151,7 @@ namespace DotsRenderer
 
 			var convertStreamJobHandle = new ConvertStreamDataToArrayJob
 			{
-				Input = matrixStreamByRenderMeshIndex,
+				Input = matricesByRenderMeshIndex,
 				Output = matrixArrayByRenderMeshIndex,
 			}.Schedule(renderMeshCount, 16, chunkCullingHandle);
 
