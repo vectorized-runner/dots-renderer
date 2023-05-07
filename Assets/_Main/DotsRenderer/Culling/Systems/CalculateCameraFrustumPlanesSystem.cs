@@ -1,6 +1,8 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace DotsRenderer
 {
@@ -15,6 +17,12 @@ namespace DotsRenderer
 		protected override void OnCreate()
 		{
 			Camera = Camera.main;
+			if(Camera == null)
+				Camera = Object.FindObjectOfType<Camera>();
+			if(Camera == null)
+				throw new Exception("Couldn't find any camera!");
+			
+			
 			FrustumPlanes = new Plane[6];
 			NativeFrustumPlanes = new NativeArray<Plane>(6, Allocator.Persistent);
 		}
