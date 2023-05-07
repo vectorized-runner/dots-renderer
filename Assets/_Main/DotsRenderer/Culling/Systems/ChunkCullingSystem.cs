@@ -31,6 +31,7 @@ namespace DotsRenderer
 		{
 			var chunkWorldRenderBounds = chunk.GetChunkComponentData(ChunkWorldRenderBoundsHandle);
 
+			AssertValid(chunkWorldRenderBounds.AABB);
 			// Early exit, if Chunk doesn't have it no need to check Entities
 			if(!RMath.IsVisibleByCameraFrustum(FrustumPlanes, chunkWorldRenderBounds.AABB))
 				return;
@@ -53,6 +54,7 @@ namespace DotsRenderer
 			{
 				for(int i = 0; i < entityCount; i++)
 				{
+					AssertValid(worldRenderBoundsArray[i].AABB);
 					if(RMath.IsVisibleByCameraFrustum(FrustumPlanes, worldRenderBoundsArray[i].AABB))
 					{
 						// Entity is visible, write its Matrix for rendering
@@ -61,6 +63,14 @@ namespace DotsRenderer
 				}
 			}
 			matrixWriter.EndForEachIndex();
+		}
+
+		private void AssertValid(AABB aabb)
+		{
+			Debug.Assert(!math.any(math.isnan(aabb.Min)));
+			Debug.Assert(!math.any(math.isinf(aabb.Min)));
+			Debug.Assert(!math.any(math.isnan(aabb.Max)));
+			Debug.Assert(!math.any(math.isinf(aabb.Max)));
 		}
 	}
 
