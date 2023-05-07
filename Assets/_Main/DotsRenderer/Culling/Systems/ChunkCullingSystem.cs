@@ -84,6 +84,7 @@ namespace DotsRenderer
 
 	public partial class ChunkCullingSystem : SystemBase
 	{
+		// TODO-Renderer: Handle disposing this every frame
 		public NativeArray<UnsafeArray<float4x4>> MatrixArrayByRenderMeshIndex;
 		public JobHandle FinalJobHandle { get; private set; }
 		public List<RenderMesh> RenderMeshes { get; private set; }
@@ -96,12 +97,17 @@ namespace DotsRenderer
 		{
 			RenderMeshes = new List<RenderMesh>();
 			FrustumSystem = World.GetExistingSystem<CalculateCameraFrustumPlanesSystem>();
-
+			
 			ChunkCullingQuery = GetEntityQuery(
 				ComponentType.ReadOnly<WorldRenderBounds>(),
 				ComponentType.ReadOnly<LocalToWorld>(),
 				ComponentType.ReadOnly(typeof(RenderMesh)),
 				ComponentType.ChunkComponentReadOnly(typeof(ChunkWorldRenderBounds)));
+		}
+
+		protected override void OnDestroy()
+		{
+			MatrixStreamByRenderMeshIndex.Dispose();
 		}
 
 		protected override void OnUpdate()

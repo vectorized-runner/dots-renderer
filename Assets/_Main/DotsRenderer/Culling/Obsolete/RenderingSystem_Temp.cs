@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace DotsRenderer
 {
-	// TODO: Move Jobs to here, easier to see flow of logic, name the Jobs properly
-	// TODO: Use Static Gizmo Drawer
-	// TODO: SIMD Plane-AABB Check
-	// TODO: Continue from here.
+	// TODO-Renderer: Move Jobs to here, easier to see flow of logic, name the Jobs properly
+	// TODO-Renderer: Use Static Gizmo Drawer
+	// TODO-Renderer: SIMD Plane-AABB Check
+	// TODO-Renderer: Continue from here.
 	// In order for this to work, we need the remaining things:
 	// RenderBounds should be static, WorldRenderBounds for entities needs to be calculated
 	// using for each WorldRenderBounds in the Chunk, ChunkWorldRenderBounds needs to be calculated

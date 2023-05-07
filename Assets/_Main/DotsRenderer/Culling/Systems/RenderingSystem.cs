@@ -25,7 +25,7 @@ namespace DotsRenderer
 
 		protected override void OnUpdate()
 		{
-			// TODO-Optimization: Find a way to not call complete on this. Even 1-frame delayed update is ok!
+			// TODO-Renderer: Find a way to not call complete on this. Even 1-frame delayed update is ok!
 			CullingSystem.FinalJobHandle.Complete();
 
 			var renderMeshes = CullingSystem.RenderMeshes;
