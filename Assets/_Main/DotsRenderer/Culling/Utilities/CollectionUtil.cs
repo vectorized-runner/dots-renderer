@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine;
 
 namespace DotsRenderer
 {
@@ -104,6 +106,20 @@ namespace DotsRenderer
 		public static ReadOnlySpan<T> AsReadOnlySpan<T>(this NativeArray<T> array) where T : unmanaged
 		{
 			return AsReadOnlySpan(array, 0, array.Length);
+		}
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ReadOnlySpan<T2> Reinterpret<T1, T2>(this ReadOnlySpan<T1> items) where T2 : unmanaged where T1 : unmanaged
+		{
+			Debug.Assert(UnsafeUtility.SizeOf<T1>() == UnsafeUtility.SizeOf<T2>());
+			return MemoryMarshal.Cast<T1, T2>(items);
+		}
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Span<T2> Reinterpret<T1, T2>(this Span<T1> items) where T2 : unmanaged where T1 : unmanaged
+		{
+			Debug.Assert(UnsafeUtility.SizeOf<T1>() == UnsafeUtility.SizeOf<T2>());
+			return MemoryMarshal.Cast<T1, T2>(items);
 		}
 	}
 }

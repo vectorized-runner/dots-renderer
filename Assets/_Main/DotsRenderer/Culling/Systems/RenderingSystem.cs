@@ -2,23 +2,24 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
 namespace DotsRenderer
 {
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
-	[UpdateAfter(typeof(CullingSystem))]
+	[UpdateAfter(typeof(ChunkCullingSystem))]
 	public partial class RenderingSystem : SystemBase
 	{
 		static Matrix4x4[] MatrixCache;
-		CullingSystem CullingSystem;
+		ChunkCullingSystem CullingSystem;
 		
 		const int MaxDrawCountPerBatch = 1023;
 
 		protected override void OnCreate()
 		{
-			CullingSystem = World.GetExistingSystem<CullingSystem>();
+			CullingSystem = World.GetExistingSystem<ChunkCullingSystem>();
 			MatrixCache = new Matrix4x4[MaxDrawCountPerBatch];
 		}
 
@@ -31,7 +32,7 @@ namespace DotsRenderer
 			if(renderMeshes.Count == 0)
 				return;
 			
-			var matricesByRenderMeshIndex = CullingSystem.MatricesByRenderMeshIndex;
+			var matricesByRenderMeshIndex = CullingSystem.MatrixArrayByRenderMeshIndex;
 			var renderMeshCount = matricesByRenderMeshIndex.Length;
 
 			for(int renderMeshIndex = 0; renderMeshIndex < renderMeshCount; renderMeshIndex++)
@@ -48,14 +49,16 @@ namespace DotsRenderer
 
 				for(batchIndex = 0; batchIndex < fullBatchCount; batchIndex++)
 				{
-					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, MaxDrawCountPerBatch);
+					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, MaxDrawCountPerBatch)
+					                            .Reinterpret<float4x4, LocalToWorld>();
 					DrawMeshInstanced(renderMesh, localToWorldSlice);
 				}
 
 				var lastBatchDrawCount = drawCount % MaxDrawCountPerBatch;
 				if(lastBatchDrawCount > 0)
 				{
-					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, lastBatchDrawCount);
+					localToWorldSlice = matrices.AsReadOnlySpan(batchIndex * MaxDrawCountPerBatch, lastBatchDrawCount)
+					                            .Reinterpret<float4x4, LocalToWorld>();
 					DrawMeshInstanced(renderMesh, localToWorldSlice);
 				}
 			}

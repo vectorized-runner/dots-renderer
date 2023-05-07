@@ -32,7 +32,7 @@ namespace DotsRenderer
 		public static bool IsOnForwardOrOnPlane(Plane plane, AABB aabb)
 		{
 			var normalDotExtents = math.dot(aabb.Extents, math.abs(plane.normal));
-			var planeDistanceToCenter = RMath.GetPlaneSignedDistanceToPoint(plane, aabb.Center);
+			var planeDistanceToCenter = GetPlaneSignedDistanceToPoint(plane, aabb.Center);
 			return planeDistanceToCenter >= -normalDotExtents;
 		}
 	}
